@@ -137,7 +137,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const { error: macroError } = await supabase
       .from('macro_indicators')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .upsert(macroRows as any, { onConflict: 'indicator_key,date' });
+      .upsert(macroRows as any, { onConflict: 'indicator_key,date,source' });
 
     if (macroError) {
       errors.push({ source: 'macro_upsert', error: macroError.message });

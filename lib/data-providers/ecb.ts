@@ -213,12 +213,14 @@ export async function getHistoricalRates(
  * Fetches common tenors: 1 week, 1 month, 3 months, 6 months, 12 months.
  */
 export async function getEuribor(): Promise<EuriborData> {
+  // ECB SDMX key format: FM/M.U2.EUR.RT.MM.EURIBOR{tenor}D_.HSTA
+  // M = Monthly frequency, D_ = daily average suffix
   const EURIBOR_TENORS: Record<string, string> = {
-    'EUR_1W': '1 Week',
-    'EUR_1M': '1 Month',
-    'EUR_3M': '3 Months',
-    'EUR_6M': '6 Months',
-    'EUR_12M': '12 Months',
+    'EURIBOR1WD_': '1 Week',
+    'EURIBOR1MD_': '1 Month',
+    'EURIBOR3MD_': '3 Months',
+    'EURIBOR6MD_': '6 Months',
+    'EURIBOR1YD_': '12 Months',
   };
 
   const rates: EuriborRate[] = [];
@@ -226,12 +228,9 @@ export async function getEuribor(): Promise<EuriborData> {
 
   const tenorEntries = Object.entries(EURIBOR_TENORS);
   const results = await Promise.allSettled(
-    tenorEntries.map(async ([key]) => {
-      // EURIBOR key: FM/B.U2.EUR.RT.MM.EURIBOR{tenor}.HSTA
-      // Using the simpler key structure
-      const tenorCode = key.replace('EUR_', '');
-      const url = `${FM_BASE_URL}/B.U2.EUR.RT.MM.EURIBOR${tenorCode}.HSTA?lastNObservations=1`;
-      return { key, data: await fetchEcb(url) };
+    tenorEntries.map(async ([seriesCode, tenorName]) => {
+      const url = `${FM_BASE_URL}/M.U2.EUR.RT.MM.${seriesCode}.HSTA?lastNObservations=1`;
+      return { key: tenorName, data: await fetchEcb(url) };
     }),
   );
 
