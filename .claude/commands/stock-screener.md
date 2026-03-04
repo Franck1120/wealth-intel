@@ -1,166 +1,108 @@
-<role>
-Sei un analista finanziario equity con esperienza su Wall Street e Borsa Italiana. Combini analisi fondamentale, tecnica e sentiment per dare giudizi chiari e azionabili — perché l'utente non vuole un report accademico, vuole sapere se comprare, tenere o vendere.
-</role>
+# Stock & ETF Screener
 
-<context>
+## Task
+I want a deep analysis of a specific stock, ETF, or security so that I can decide whether to buy, hold, or sell with exact entry, stop loss, and target prices. Success means: I have a clear verdict with a concrete action plan, not a wishy-washy "it could go either way."
+
+## Your Input
 $ARGUMENTS
 
-L'utente indicherà un ticker, un nome di azienda, un ETF, o chiederà uno screening. Analizzalo in profondità.
-</context>
+The user will provide a ticker, company name, ETF, or ask for a screening.
 
-<instructions>
-Usa web search per trovare dati REALI e aggiornati: prezzo attuale, earnings recenti, metriche fondamentali, notizie, target price degli analisti. Poi esegui TUTTI gli step.
+## Context
+Use web search to find REAL current data: price, recent earnings, fundamental metrics, news, analyst targets, insider activity.
 
-## STEP 1: Identifica il Tipo di Asset
+**Key metrics to find:**
+- Fundamentals: P/E (TTM + Forward), P/B, P/S, EV/EBITDA, Dividend Yield, Payout Ratio, ROE, ROA, Debt/Equity, FCF Margin, Revenue/EPS Growth YoY, Gross Margin
+- Technicals: SMA 50, SMA 200, RSI 14, 52-week range, volume vs 90d average, key support/resistance
+- Catalysts: next earnings date, upcoming events, insider buying/selling
+- Analysts: target price (mean/high/low), buy/hold/sell distribution, recent revisions
 
-Determina se è: Growth Stock, Value Stock, Dividend Stock, ETF (Index/Sector/Thematic/Bond), IPO, SPAC, o Fondo. Questo determina quali metriche sono più rilevanti.
+**For Growth Stocks add:** Revenue Growth, PEG ratio, Rule of 40, TAM penetration
+**For Value Stocks add:** P/E vs 5Y average, P/B (<1 = deep value), FCF Yield (>8% = value), Dividend Aristocrat status
+**For ETFs add:** TER, AUM (<€100M = delisting risk), Top 10 holdings, tracking difference, Acc vs Dist, replication method. For thematic ETFs: "are you late to the party?"
+**For IPO/SPAC add:** pre-money valuation vs quoted peers, lock-up period, prospectus red flags
 
-## STEP 2: Analisi Fondamentale
+Always compare with 3-5 direct peers. A P/E of 25 can be cheap or expensive depending on sector.
 
-Raccogli e valuta queste metriche (cerca dati reali):
+## Reference
 
-| Metrica | Perché è importante |
-|---|---|
-| P/E (TTM e Forward) | Stai pagando troppo per gli utili? |
-| P/B | Il mercato valuta più o meno dei book value? |
-| P/S | Cruciale per growth senza profitti |
-| EV/EBITDA | Valutazione enterprise-level |
-| Dividend Yield + Payout | Sostenibilità del dividendo |
-| ROE, ROA | Efficienza del management |
-| Debt/Equity | Leva finanziaria |
-| FCF Margin | Cash reale generato |
-| Revenue/EPS Growth YoY | Momentum degli utili |
-| Gross Margin | Potere di pricing |
-
-Confronta OGNI metrica con la media del settore e con 3-5 peers diretti.
-
-## STEP 3: Analisi Tecnica
-
-- Trend: sopra/sotto SMA 50 e SMA 200
-- RSI 14: ipercomprato (>70) / ipervenduto (<30) / neutro
-- 52-week range: posizione attuale nel range
-- Volume: vs media 90 giorni (conferma o divergenza)
-- Supporti e resistenze chiave
-
-## STEP 4: Catalyst e Rischi
-
-- Prossimi earnings (data esatta)
-- Catalyst positivi attesi (prodotto, M&A, regolamentazione)
-- Rischi imminenti
-- Insider buying/selling recente (insider sa più di te)
-
-## STEP 5: Consensus Analisti
-
-- Target price: medio, alto, basso
-- Rating: distribuzione buy/hold/sell
-- Revisioni recenti (upgrade/downgrade)
-
-## STEP 6: Verdict e Action Plan
-
-Dai un giudizio chiaro con entry, stop, target e sizing. Be decisive — non "potrebbe salire o scendere".
-</instructions>
-
-<output_format>
 ```
 ═══════════════════════════════════════
-📈 STOCK ANALYSIS: [TICKER]
+📈 STOCK ANALYSIS: NVDA
 ═══════════════════════════════════════
 
-💰 Prezzo: $XX | Mkt Cap: $XXB
-📊 Score: XX/100
+💰 Prezzo: $875 | Mkt Cap: $2.15T
+📊 Score: 82/100
 
-🎯 VERDICT: [STRONG BUY / BUY / HOLD / SELL / STRONG SELL]
+🎯 VERDICT: BUY
 
-📌 THESIS: [1 frase chiara e memorabile]
+📌 THESIS: Dominant AI infrastructure play with 80%+ data center GPU share and accelerating enterprise adoption.
 
-FONDAMENTALI: [Sottovalutato / Fair Value / Sopravvalutato] — [1 frase]
-TECNICI: [Bullish / Neutral / Bearish] — [1 frase]
-MOMENTUM: [Forte / Moderato / Debole / Negativo] — [1 frase]
+FONDAMENTALI: Fair Value — P/E 35 justified by 90%+ revenue growth
+TECNICI: Bullish — above SMA 50 & 200, RSI 62 (healthy momentum)
+MOMENTUM: Forte — volume confirming breakout, institutions accumulating
 
 ─── FONDAMENTALI ───
 | Metrica | Valore | vs Settore | Giudizio |
 |---|---|---|---|
-| P/E (TTM) | XX | XX | |
-| P/E Forward | XX | XX | |
-| P/S | XX | XX | |
-| EV/EBITDA | XX | XX | |
-| ROE | XX% | XX% | |
-| Debt/Equity | XX | XX | |
-| FCF Margin | XX% | XX% | |
-| Rev Growth YoY | XX% | XX% | |
+| P/E (TTM) | 65 | 28 | Premium, but growth justifies |
+| P/E Forward | 35 | 22 | More reasonable on forward |
+| P/S | 32 | 8 | High but revenue exploding |
+| EV/EBITDA | 52 | 18 | Premium |
+| ROE | 115% | 22% | Exceptional |
+| Debt/Equity | 0.41 | 0.65 | Healthy |
+| FCF Margin | 45% | 15% | Cash machine |
+| Rev Growth YoY | 94% | 12% | Extraordinary |
 
 ─── TECNICI ───
-SMA 50:     $XX (sopra/sotto XX%)
-SMA 200:    $XX (sopra/sotto XX%)
-RSI 14:     XX
-52w Range:  $XX - $XX (al XX%)
-Volume:     XM vs avg XM
+SMA 50:     $820 (sopra +6.7%)
+SMA 200:    $680 (sopra +28.7%)
+RSI 14:     62 (healthy momentum, not overbought)
+52w Range:  $470 - $950 (al 83%)
+Volume:     45M vs avg 52M (slightly below, watch)
 
 ⚡ CATALYSTS:
-1. [catalyst + timing]
-2. [catalyst + timing]
+1. GTC Conference — Mar 17 (new products, Blackwell Ultra)
+2. Q1 earnings — May 28 (consensus: beat again)
 
 ⚠️ RISKS:
-1. [rischio + probabilità + impatto]
-2. [rischio + probabilità + impatto]
+1. China export restrictions tightening — could hit 10-15% of revenue
+2. Customer concentration (hyperscalers) — if MSFT/GOOGL slow capex
 
 ─── ANALISTI ───
-Target medio: $XX (+XX%) | Range: $XX - $XX
-Rating: XX% Buy / XX% Hold / XX% Sell
+Target medio: $1,050 (+20%) | Range: $700 - $1,400
+Rating: 88% Buy / 10% Hold / 2% Sell
 
 💰 TARGET PRICES:
-- Bear case: $XX (-XX%) — se [scenario]
-- Base case: $XX (+XX%) — se [scenario]
-- Bull case: $XX (+XX%) — se [scenario]
+- Bear: $680 (-22%) — se recession hits AI capex
+- Base: $1,050 (+20%) — continued growth, new products
+- Bull: $1,300 (+49%) — AI adoption accelerates beyond expectations
 
 📋 ACTION PLAN:
-- Entry: $XX (ORA / limit a $XX)
-- Stop loss: $XX (-XX%)
-- Take profit 1: $XX (+XX%) — 50% della posizione
-- Take profit 2: $XX (+XX%) — resto
-- Position size: XX% del portfolio
-- Timeline: XX settimane/mesi
+- Entry: $860-880 (current zone, or limit at $830 on pullback)
+- Stop loss: $750 (-14%)
+- Take profit 1: $1,050 (+20%) — sell 50%
+- Take profit 2: $1,250 (+43%) — sell rest
+- Position size: 8% del portfolio
+- Timeline: 6-12 mesi
 ```
-</output_format>
 
-<additional_analysis>
+## Brief
+- Output: structured analysis as shown in reference
+- Length: fits in one screen, data-dense
+- Does NOT sound like: "the stock could go up or down depending on market conditions" — be decisive
+- Success means: I have entry price, stop loss, targets, and position size. A clear YES or NO.
 
-## Per GROWTH STOCKS — aggiungi:
-- Revenue Growth rate (>20% YoY = growth confermato)
-- PEG ratio (P/E / growth rate — sotto 1 = sottovalutato per la crescita)
-- Rule of 40 (revenue growth % + profit margin % > 40 = eccellente per SaaS)
-- TAM penetration (quanta runway di crescita resta?)
-- Customer acquisition trend
+## Rules
+1. Always compare with 3-5 direct peers — a number in isolation means nothing
+2. Include macro context — a stock doesn't exist in a vacuum
+3. For dividend stocks: verify sustainability with FCF coverage > 1.5x
+4. For penny stocks (<$5): explicit WARNING about liquidity risk
+5. Always end with a concrete action plan (entry, stop, target, size)
+6. HOLD must have a specific reason — it's not the refuge of indecision
+7. For ETFs: always ask "is TER justified vs cheaper alternatives?"
 
-## Per VALUE STOCKS — aggiungi:
-- P/E vs media storica 5 anni
-- P/B (sotto 1 = potenziale deep value)
-- FCF Yield (>8% = value territory)
-- Dividend Aristocrat status (25+ anni di crescita dividendo)
-- Margin of safety e catalyst per re-rating
+If you're about to break any of these rules, stop and tell me before continuing.
 
-## Per ETF — analisi specifica:
-
-**Dati generali:** TER, AUM (sotto 100M = rischio delisting), Top 10 holdings, tracking difference, distribuzione geo/settoriale, Acc vs Dist
-
-**Per tipo:**
-- **Index ETF** (VWCE, SWDA): tracking quality, replication method, domicilio fiscale (Irlanda = ottimale)
-- **Sector ETF:** ciclico vs difensivo, timing nel ciclo, rotation strategy
-- **Thematic ETF:** TER alto (0.5-0.75%), concentrazione, sei in ritardo? Confronta: meglio ETF o i 3-5 leader diretti?
-- **Bond ETF:** duration, credit quality, distribution yield vs total return, sensibilità ai tassi
-- **Fondi Comuni:** TER 1.5-2.5% vs 0.07-0.5% ETF — il fondo giustifica il costo extra? (<20% batte benchmark su 10Y)
-
-## Per IPO/SPAC — aggiungi:
-- Valuation pre-money vs peers quotati
-- Lock-up period e date
-- Red flags nel prospetto
-</additional_analysis>
-
-<rules>
-- Confronta SEMPRE con 3-5 peers diretti — perché un P/E di 25 può essere cheap o expensive a seconda del settore
-- Includi il contesto macro (tassi, ciclo) — perché un titolo non esiste nel vuoto
-- Per dividendari: verifica SEMPRE sostenibilità (FCF coverage > 1.5x) — perché un dividend yield alto con payout insostenibile è una trappola
-- Per penny stock (<$5): WARNING esplicito — perché la liquidità è un killer silenzioso
-- Concludi SEMPRE con action plan concreto (entry, stop, target, size) — perché senza un piano non è un investimento, è una scommessa
-- Sii decisivo nel verdict — "HOLD" deve avere un motivo preciso, non essere il rifugio dell'indecisione
-</rules>
+## Execution
+Search for all data, then deliver the complete analysis in one shot.

@@ -1,131 +1,119 @@
-<role>
-Sei il mio sistema di intelligence finanziaria — l'equivalente di un Bloomberg Terminal personale potenziato da AI. Il tuo lavoro è condensare TUTTO quello che devo sapere sui mercati in un unico briefing azionabile. Esegui un'analisi completa in un singolo passaggio, senza chiedere conferme intermedie — perché il mio tempo vale e voglio il quadro completo subito.
-</role>
+# Wealth Check — Full Weekly Briefing
 
-<context>
+## Task
+I want a complete investment intelligence briefing covering macro, markets, trends, opportunities, and risks — all in ONE response — so that I have the full picture and know exactly what to do this week. This replaces 11 separate analyses with a single comprehensive check.
+
+## Your Input
 $ARGUMENTS
 
-Se l'utente specifica ticker/asset/idee, analizzali nel briefing. Se non specifica nulla, esegui il check completo standard su tutti i mercati.
-</context>
+If specific tickers/assets are mentioned, include their analysis. If nothing specified, run the full standard check.
 
-<instructions>
-Usa web search INTENSIVAMENTE per dati reali e aggiornati. Esegui TUTTO in ordine, TUTTO in un'unica risposta. Be thorough and comprehensive — questo è il briefing settimanale che guida le mie decisioni.
+## Context
+Use web search INTENSIVELY for every section. This is my weekly briefing — it must be thorough, data-rich, and actionable. Every number must be real.
 
-## STEP 1: MACRO RADAR
+**Data to find:**
+- Macro: Fed rate, CPI, GDP, VIX, 10Y yield, EUR/USD, BCE, Fear & Greed, BTP spread, gold, oil
+- Markets: S&P500 weekly, BTC, ETH, gold, top gainers/losers
+- Trends: emerging sectors, hot narratives, VC funding patterns
+- Opportunities: 3 best risk/reward setups right now
+- Risks: what could go wrong in the next 7 days
 
-Cerca: Fed rate, CPI, GDP, VIX, 10Y yield, EUR/USD, BCE, Fear & Greed, BTP spread, oro, petrolio.
+The user is an Italian investor. Italian taxation and European context always matter.
 
-## STEP 2: MERCATI — TOP MOVERS
+Benchmark: everything gets compared to "just buying VWCE" at ~8%/year. If an opportunity doesn't beat that risk-adjusted, it's not worth the effort.
 
-Cerca: S&P500 questa settimana, top gainers/losers, crypto market (BTC, ETH), oro.
+## Reference
 
-## STEP 3: TREND SCAN
-
-Cerca: trend emergenti, settori caldi, narrative crypto, venture funding recente.
-
-## STEP 4: OPPORTUNITA' DELLA SETTIMANA
-
-Basandoti su macro + trend + mercati, identifica le 3 migliori opportunità concrete. Ogni opportunità DEVE avere entry, stop loss e target — senza questi non è un'opportunità, è un desiderio.
-
-## STEP 5: RISCHI E WARNING
-
-Cosa può andare storto? Eventi chiave nei prossimi 7 giorni.
-
-## STEP 6: PIANO D'AZIONE
-
-Cosa fare, cosa non fare, cosa aspettare.
-
-## STEP 7: ANALISI ASSET SPECIFICI (se forniti dall'utente)
-
-Per ogni ticker/idea menzionata, analisi rapida con verdict.
-</instructions>
-
-<output_format>
 ```
 ═══════════════════════════════════════════════════
-💰 WEALTH CHECK — [DATA]
+💰 WEALTH CHECK — 4 Mar 2026
 ═══════════════════════════════════════════════════
 
 ═══ 🌍 MACRO ═══
-Regime:    [RISK-ON / RISK-OFF / TRANSIZIONE]
-Fed:       X.XX% | CPI: X.X% | GDP: X.X% | VIX: XX
-10Y: X.XX% | EUR/USD: X.XX | Gold: $X,XXX | Oil: $XX
-BTP-Bund:  XXX bps
-Fear&Greed: XX/100 [classificazione]
-⚡ Cosa significa: [1 frase operativa — cosa fare con questa macro]
+Regime:    RISK-ON (con cautela)
+Fed:       4.50% | CPI: 2.8% | GDP: 2.1% | VIX: 16.5
+10Y: 4.25% | EUR/USD: 1.082 | Gold: $2,920 | Oil: $78
+BTP-Bund:  128 bps
+Fear&Greed: 62/100 GREED
+⚡ Cosa significa: Mercato costruttivo, equity supportato ma non euforia. Deploy cash gradualmente.
 
 ═══ 📈 MERCATI ═══
-S&P 500:   X,XXX (+/-X.X% settimana)
-BTC:       $XX,XXX (+/-X.X%)
-ETH:       $X,XXX (+/-X.X%)
-Oro:       $X,XXX (+/-X.X%)
+S&P 500:   5,890 (+1.2% settimana)
+BTC:       $94,500 (+3.8%)
+ETH:       $3,200 (+2.1%)
+Oro:       $2,920 (+0.5%)
 
-🔥 Top 3 della settimana: [ticker +XX%, ticker +XX%, ticker +XX%]
-💀 Worst 3: [ticker -XX%, ticker -XX%, ticker -XX%]
+🔥 Top 3: SMCI +18%, PLTR +12%, MSTR +9%
+💀 Worst 3: NKE -8%, PFE -6%, BA -5%
 
 ═══ 🔥 TREND ═══
-1. [Trend HOT] — come investire: [ticker/ETF concreto]
-2. [Trend EMERGING] — monitorare: [cosa e perché]
-3. [Trend EARLY] — thesis: [perché potrebbe esplodere]
+1. AI Agents (HOT) — investire: MSFT, GOOGL, o BOTZ ETF
+2. Nuclear Renaissance (EMERGING) — monitorare: CCJ, NLR ETF
+3. Tokenizzazione RWA (EARLY) — thesis: $16T market by 2030, ONDO, MKR
 
 ═══ 💡 OPPORTUNITA' ═══
 
-1. [AZIONE SPECIFICA]
-   Asset: [ticker/nome]
-   Perché ORA: [catalyst concreto con data]
-   Entry: $XX | Target: $XX (+XX%) | Stop: $XX (-XX%)
-   Size: XX% del portfolio
-   Rischio: [BASSO/MEDIO/ALTO]
-   Edge: [perché questa opportunità ha un vantaggio — 1 frase]
+1. COMPRARE BTP VALORE Mar2030
+   Asset: BTP Valore scadenza 2030
+   Perché ORA: yield 3.4% netto (dopo 12.5% tasse), BCE taglia a giugno
+   Entry: 99.50 | Target: 103 (+3.5%) | Stop: 97 (-2.5%)
+   Size: 15% del portfolio
+   Rischio: BASSO
+   Edge: tassazione 12.5% vs 26% corporate = 1%+ di vantaggio annuo
 
-2. [AZIONE SPECIFICA]
-   ...
+2. DCA su VWCE post-pullback
+   Asset: VWCE @ €118
+   Perché ORA: +1.2% settimana, trend intatto, regime risk-on
+   Entry: €118 (ORA, DCA mensile) | Target: €135 (+14%) | Stop: €105 (-11%)
+   Size: €2,000 (PAC mensile)
+   Rischio: BASSO
+   Edge: 8%/anno storico, batte il 90% dei fund manager
 
-3. [AZIONE SPECIFICA]
-   ...
+3. LONG SOL su pullback
+   Asset: SOL @ $148
+   Perché ORA: DeFi TVL growing, Firedancer in arrivo, above SMA 200
+   Entry: $140-150 | Target: $200 (+35%) | Stop: $110 (-25%)
+   Size: 2% del portfolio
+   Rischio: ALTO
+   Edge: strongest L1 after ETH, ecosystem expanding
 
 ═══ ⚠️ ATTENZIONE ═══
-🔴 Rischio #1: [cosa + impatto se si verifica]
-🟡 Rischio #2: [cosa + impatto]
-📅 Eventi chiave prossimi 7 giorni:
-   - [data] — [evento] (impatto: [alto/medio])
-   - [data] — [evento] (impatto: [alto/medio])
+🔴 Jobs Report venerdì — se disoccupazione sale sopra 4.3%, risk-off immediato
+🟡 CPI 12 marzo — se inflazione risale, addio taglio BCE giugno
+📅 7 Mar — Jobs Report (impatto: ALTO)
+📅 12 Mar — CPI USA (impatto: ALTO)
+📅 13 Mar — BCE tassi (impatto: ALTO)
 
 ═══ 📋 COSA FARE QUESTA SETTIMANA ═══
 
 ✅ FARE:
-1. [azione concreta con ticker/importo/timing]
-2. [azione concreta]
-3. [azione concreta]
+1. DCA €2,000 su VWCE — il PAC mensile non si ferma mai
+2. Valutare BTP Valore 2030 per la parte bond (yield 3.4% netto)
+3. Impostare alert SOL a $140 per entry su pullback
 
 ❌ NON FARE:
-1. [cosa evitare e perché — 1 frase]
+1. Non comprare tech a questi prezzi senza pullback — RSI di NVDA/MSFT sopra 65
 
 💤 ASPETTARE:
-1. [cosa monitorare prima di agire — trigger specifico]
+1. Jobs Report venerdì — se forte, aggiungere equity ciclico lunedì prossimo
 ```
-</output_format>
 
-<asset_analysis_format>
-Se l'utente ha fornito asset specifici, aggiungi per ognuno:
+## Brief
+- Output: complete briefing in ONE response, structured exactly as reference
+- Length: 1-2 pages, every line carries information, zero filler
+- Does NOT sound like: a financial news recap or "markets were mixed this week" — I want ACTIONS, not narration
+- Success means: after reading, I know the regime, the opportunities, the risks, and exactly what to trade this week
 
-```
-═══ 🔍 ANALISI: [TICKER] ═══
-Prezzo: $XX | Score: XX/100
-Fondamentali: [1 riga — sottovalutato/fair/sopravvalutato + metrica chiave]
-Tecnici: [1 riga — trend, RSI, supporto/resistenza]
-🎯 Verdetto: [BUY / HOLD / SELL] — [1 frase motivo]
-Entry: $XX | Stop: $XX | Target: $XX
-vs VWCE: [meglio o peggio del benchmark? — 1 frase]
-```
-</asset_analysis_format>
+## Rules
+1. Everything in ONE response — no intermediate questions, no "shall I continue?"
+2. Every number from web search, NEVER invented — a fake number could cost real money
+3. Every opportunity MUST have entry, stop loss, and target — without these it's a wish, not a trade
+4. Always compare with VWCE benchmark — "is this better than just buying VWCE?"
+5. "Do nothing this week" is a valid and respectable answer
+6. Be concise and information-dense — my time is valuable, no fluff
+7. Include Italian context always: BTP, EURIBOR, 12.5% vs 26% taxation
 
-<rules>
-- TUTTO in un'unica risposta, zero conferme intermedie — perché il valore è nel quadro completo, non nei pezzi
-- Dati REALI da web search, MAI inventati — un numero inventato può costare soldi veri
-- Ogni opportunità DEVE avere entry, stop loss e target — perché senza exit plan non è un trade, è speranza
-- Confronta SEMPRE con "meglio che mettere in VWCE?" — è il benchmark minimo, l'8% annuo che chiunque può ottenere
-- Se non c'è niente di interessante: "Non fare nulla questa settimana" è una risposta valida e rispettabile
-- Sii conciso e denso di informazione — il mio tempo vale, no fuffa, no ripetizioni
-- Pensa in modo critico: dove c'è il vero edge? Cosa sta il mercato sottovalutando?
-</rules>
+If you're about to break any of these rules, stop and tell me before continuing.
+
+## Execution
+Run all web searches, then deliver the complete briefing in one shot. This is a one-shot command — no conversation needed.
