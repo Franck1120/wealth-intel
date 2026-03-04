@@ -63,7 +63,7 @@ export function PerformanceChart({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Portfolio Performance</CardTitle>
+        <CardTitle>Performance Portafoglio</CardTitle>
         <div className="flex gap-1">
           {PERIODS.map((p) => (
             <Button
@@ -107,7 +107,7 @@ export function PerformanceChart({
               }}
               formatter={(value: number | undefined, name: string | undefined) => [
                 formatCurrency(value ?? 0, currency),
-                name === 'value' ? 'Portfolio' : 'Benchmark',
+                name === 'value' ? 'Portafoglio' : 'Benchmark',
               ]}
             />
             <Area

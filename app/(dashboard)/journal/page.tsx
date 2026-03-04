@@ -1,10 +1,8 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { Card, CardContent } from '@/components/ui/card';
 import { JournalFilters } from '@/components/journal/journal-filters';
+import { CreateJournalEntry } from '@/components/journal/create-journal-entry';
 import { BookOpen } from 'lucide-react';
-import Link from 'next/link';
-
-export const dynamic = 'force-dynamic';
 
 interface JournalEntry {
   id: string;
@@ -29,19 +27,19 @@ interface PageProps {
 }
 
 const ACTION_BADGES: Record<string, { label: string; className: string }> = {
-  buy: { label: 'BUY', className: 'bg-emerald-500/10 text-emerald-500' },
-  sell: { label: 'SELL', className: 'bg-red-500/10 text-red-500' },
-  hold: { label: 'HOLD', className: 'bg-blue-500/10 text-blue-500' },
-  skip: { label: 'SKIP', className: 'bg-gray-500/10 text-gray-500' },
+  buy: { label: 'ACQUISTO', className: 'bg-emerald-500/10 text-emerald-500' },
+  sell: { label: 'VENDITA', className: 'bg-red-500/10 text-red-500' },
+  hold: { label: 'MANTIENI', className: 'bg-blue-500/10 text-blue-500' },
+  skip: { label: 'SALTA', className: 'bg-gray-500/10 text-gray-500' },
 };
 
 const EMOTION_BADGES: Record<string, { label: string; className: string }> = {
-  confident: { label: 'Confident', className: 'bg-emerald-500/10 text-emerald-500' },
-  fearful: { label: 'Fearful', className: 'bg-red-500/10 text-red-500' },
-  greedy: { label: 'Greedy', className: 'bg-yellow-500/10 text-yellow-500' },
+  confident: { label: 'Sicuro', className: 'bg-emerald-500/10 text-emerald-500' },
+  fearful: { label: 'Pauroso', className: 'bg-red-500/10 text-red-500' },
+  greedy: { label: 'Avido', className: 'bg-yellow-500/10 text-yellow-500' },
   fomo: { label: 'FOMO', className: 'bg-orange-500/10 text-orange-500' },
-  uncertain: { label: 'Uncertain', className: 'bg-purple-500/10 text-purple-500' },
-  neutral: { label: 'Neutral', className: 'bg-gray-500/10 text-gray-500' },
+  uncertain: { label: 'Incerto', className: 'bg-purple-500/10 text-purple-500' },
+  neutral: { label: 'Neutrale', className: 'bg-gray-500/10 text-gray-500' },
 };
 
 export default async function JournalPage({ searchParams }: PageProps) {
@@ -74,18 +72,13 @@ export default async function JournalPage({ searchParams }: PageProps) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Decision Journal
+            Diario Decisioni
           </h1>
           <p className="text-muted-foreground">
-            Track every investment decision, rationale, and emotional state.
+            Registra ogni decisione di investimento, motivazione e stato emotivo.
           </p>
         </div>
-        <Link
-          href="/journal/new"
-          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-        >
-          New Entry
-        </Link>
+        <CreateJournalEntry />
       </div>
 
       {/* Filters */}
@@ -101,18 +94,13 @@ export default async function JournalPage({ searchParams }: PageProps) {
           <CardContent className="flex flex-col items-center justify-center py-16">
             <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">
-              Your journal is empty
+              Il tuo diario e' vuoto
             </h3>
             <p className="text-muted-foreground text-center max-w-sm mb-6">
-              Start documenting your investment decisions to build a record
-              of your thought process and improve over time.
+              Inizia a documentare le tue decisioni di investimento per costruire
+              un registro del tuo processo decisionale e migliorare nel tempo.
             </p>
-            <Link
-              href="/journal/new"
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              Create First Entry
-            </Link>
+            <CreateJournalEntry label="Crea Prima Voce" />
           </CardContent>
         </Card>
       ) : (
@@ -136,7 +124,7 @@ export default async function JournalPage({ searchParams }: PageProps) {
                     <div className="flex items-center gap-3">
                       {/* Date */}
                       <time className="text-xs text-muted-foreground">
-                        {new Date(entry.created_at).toLocaleDateString('en-US', {
+                        {new Date(entry.created_at).toLocaleDateString('it-IT', {
                           month: 'short',
                           day: 'numeric',
                           year: 'numeric',
@@ -170,7 +158,7 @@ export default async function JournalPage({ searchParams }: PageProps) {
                     {/* Conviction Bar */}
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-muted-foreground">
-                        Conviction
+                        Convinzione
                       </span>
                       <div className="flex gap-0.5">
                         {Array.from({ length: 10 }).map((_, i) => (
@@ -201,7 +189,7 @@ export default async function JournalPage({ searchParams }: PageProps) {
                   {entry.outcome && (
                     <div className="mt-3 rounded-md bg-muted p-3">
                       <p className="text-xs font-medium text-muted-foreground mb-1">
-                        Outcome Review
+                        Revisione Esito
                         {entry.reviewed_at && (
                           <span className="ml-2">
                             ({new Date(entry.reviewed_at).toLocaleDateString()})

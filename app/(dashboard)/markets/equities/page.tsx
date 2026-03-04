@@ -2,10 +2,13 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
 import { EquitySearchBar } from '@/components/markets/equity-search-bar';
-import { AssetPriceChart as PriceChart } from '@/components/charts/asset-price-chart';
+import dynamic from 'next/dynamic';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+const PriceChart = dynamic(
+  () => import('@/components/charts/asset-price-chart').then((m) => ({ default: m.AssetPriceChart })),
+  { loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" /> },
+);
 
 interface WatchlistEquity {
   id: string;
@@ -46,9 +49,9 @@ export default async function EquitiesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Equities</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Azioni</h1>
         <p className="text-muted-foreground">
-          Track stocks, ETFs, and equity indices.
+          Monitora azioni, ETF e indici azionari.
         </p>
       </div>
 
@@ -58,16 +61,16 @@ export default async function EquitiesPage() {
       {/* Watchlist */}
       <Card>
         <CardHeader>
-          <CardTitle>Watchlist</CardTitle>
+          <CardTitle>Lista Osservati</CardTitle>
         </CardHeader>
         <CardContent>
           {equities.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-muted-foreground mb-2">
-                Your equity watchlist is empty.
+                La tua lista osservati e' vuota.
               </p>
               <p className="text-sm text-muted-foreground">
-                Search for stocks above and add them to your watchlist.
+                Cerca azioni qui sopra e aggiungile alla tua lista osservati.
               </p>
             </div>
           ) : (
@@ -76,13 +79,13 @@ export default async function EquitiesPage() {
                 <thead className="border-b">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Symbol
+                      Simbolo
                     </th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Price
+                      Prezzo
                     </th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Change
+                      Variazione
                     </th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Volume
@@ -91,7 +94,7 @@ export default async function EquitiesPage() {
                       P/E
                     </th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Score
+                      Punteggio
                     </th>
                   </tr>
                 </thead>
@@ -174,7 +177,7 @@ export default async function EquitiesPage() {
         <Card>
           <CardHeader>
             <CardTitle>
-              {selectedEquity.symbol} Price Chart
+              Grafico Prezzo {selectedEquity.symbol}
               <span className="ml-2 text-sm font-normal text-muted-foreground">
                 {selectedEquity.name}
               </span>
@@ -190,15 +193,15 @@ export default async function EquitiesPage() {
       {selectedEquity?.score !== null && selectedEquity?.score !== undefined && (
         <Card>
           <CardHeader>
-            <CardTitle>Score Breakdown - {selectedEquity.symbol}</CardTitle>
+            <CardTitle>Dettaglio Punteggio - {selectedEquity.symbol}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
               {[
-                { label: 'Fundamental', value: '--' },
-                { label: 'Technical', value: '--' },
+                { label: 'Fondamentale', value: '--' },
+                { label: 'Tecnico', value: '--' },
                 { label: 'Sentiment', value: '--' },
-                { label: 'Macro Alignment', value: '--' },
+                { label: 'Allineamento Macro', value: '--' },
               ].map((metric) => (
                 <div
                   key={metric.label}
@@ -212,8 +215,8 @@ export default async function EquitiesPage() {
               ))}
             </div>
             <p className="text-xs text-muted-foreground mt-4">
-              Detailed score breakdowns will be available once the scoring engine
-              processes this asset.
+              Il dettaglio dei punteggi sara' disponibile quando il motore di scoring
+              avra' elaborato questo asset.
             </p>
           </CardContent>
         </Card>

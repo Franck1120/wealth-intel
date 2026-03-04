@@ -1,9 +1,12 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AssetPriceChart as PriceChart } from '@/components/charts/asset-price-chart';
+import dynamic from 'next/dynamic';
 import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+const PriceChart = dynamic(
+  () => import('@/components/charts/asset-price-chart').then((m) => ({ default: m.AssetPriceChart })),
+  { loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" /> },
+);
 
 interface ForexPair {
   id: string;
@@ -35,7 +38,7 @@ export default async function ForexPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Forex</h1>
         <p className="text-muted-foreground">
-          Major currency pairs and exchange rates.
+          Principali coppie valutarie e tassi di cambio.
         </p>
       </div>
 
@@ -43,10 +46,10 @@ export default async function ForexPage() {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16">
             <DollarSign className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No forex data yet</h3>
+            <h3 className="text-lg font-semibold mb-2">Nessun dato forex disponibile</h3>
             <p className="text-muted-foreground text-center max-w-sm">
-              Forex pairs will appear here once the data pipeline is configured
-              and fetching exchange rate data.
+              Le coppie forex appariranno qui quando la pipeline dati sara'
+              configurata e scarichera' i tassi di cambio.
             </p>
           </CardContent>
         </Card>
@@ -101,7 +104,7 @@ export default async function ForexPage() {
             <Card>
               <CardHeader>
                 <CardTitle>
-                  {selectedPair.symbol} Chart
+                  Grafico {selectedPair.symbol}
                   {selectedPair.name && (
                     <span className="ml-2 text-sm font-normal text-muted-foreground">
                       {selectedPair.name}

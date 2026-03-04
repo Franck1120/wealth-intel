@@ -10,11 +10,11 @@ interface JournalFiltersProps {
 }
 
 const ACTION_OPTIONS = [
-  { value: '', label: 'All Actions' },
-  { value: 'buy', label: 'Buy' },
-  { value: 'sell', label: 'Sell' },
-  { value: 'hold', label: 'Hold' },
-  { value: 'skip', label: 'Skip' },
+  { value: '', label: 'Tutte le Azioni' },
+  { value: 'buy', label: 'Acquisto' },
+  { value: 'sell', label: 'Vendita' },
+  { value: 'hold', label: 'Mantieni' },
+  { value: 'skip', label: 'Salta' },
 ];
 
 export function JournalFilters({
@@ -43,7 +43,7 @@ export function JournalFilters({
       {/* Action Filter */}
       <div className="space-y-1">
         <label className="text-xs font-medium text-muted-foreground">
-          Action
+          Azione
         </label>
         <select
           value={currentAction ?? ''}
@@ -61,7 +61,7 @@ export function JournalFilters({
       {/* Date From */}
       <div className="space-y-1">
         <label className="text-xs font-medium text-muted-foreground">
-          From
+          Da
         </label>
         <input
           type="date"
@@ -73,7 +73,7 @@ export function JournalFilters({
 
       {/* Date To */}
       <div className="space-y-1">
-        <label className="text-xs font-medium text-muted-foreground">To</label>
+        <label className="text-xs font-medium text-muted-foreground">A</label>
         <input
           type="date"
           value={currentTo ?? ''}
@@ -85,12 +85,12 @@ export function JournalFilters({
       {/* Clear Filters */}
       {(currentAction || currentFrom || currentTo) && (
         <div className="space-y-1">
-          <label className="text-xs font-medium text-transparent">Clear</label>
+          <label className="text-xs font-medium text-transparent">Cancella</label>
           <button
             onClick={() => router.push('/journal')}
             className="flex h-9 items-center rounded-md border border-input px-3 text-sm hover:bg-accent transition-colors"
           >
-            Clear Filters
+            Cancella Filtri
           </button>
         </div>
       )}

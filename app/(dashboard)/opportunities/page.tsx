@@ -15,13 +15,13 @@ import {
 } from 'lucide-react';
 
 const KANBAN_COLUMNS = [
-  { id: 'discovered', label: 'Discovered', icon: Lightbulb, color: 'text-blue-500' },
-  { id: 'researching', label: 'Researching', icon: Search, color: 'text-purple-500' },
-  { id: 'validated', label: 'Validated', icon: CheckCircle2, color: 'text-emerald-500' },
-  { id: 'watching', label: 'Watching', icon: Eye, color: 'text-yellow-500' },
-  { id: 'invested', label: 'Invested', icon: TrendingUp, color: 'text-green-600' },
-  { id: 'exited', label: 'Exited', icon: LogOut, color: 'text-gray-500' },
-  { id: 'rejected', label: 'Rejected', icon: XCircle, color: 'text-red-500' },
+  { id: 'discovered', label: 'Scoperta', icon: Lightbulb, color: 'text-blue-500' },
+  { id: 'researching', label: 'In Ricerca', icon: Search, color: 'text-purple-500' },
+  { id: 'validated', label: 'Validata', icon: CheckCircle2, color: 'text-emerald-500' },
+  { id: 'watching', label: 'In Osservazione', icon: Eye, color: 'text-yellow-500' },
+  { id: 'invested', label: 'Investita', icon: TrendingUp, color: 'text-green-600' },
+  { id: 'exited', label: 'Uscita', icon: LogOut, color: 'text-gray-500' },
+  { id: 'rejected', label: 'Rifiutata', icon: XCircle, color: 'text-red-500' },
 ] as const;
 
 type OpportunityStatus = (typeof KANBAN_COLUMNS)[number]['id'];
@@ -37,13 +37,13 @@ interface Opportunity {
 }
 
 const MODULE_BADGES: Record<string, { label: string; className: string }> = {
-  equities: { label: 'Equities', className: 'bg-blue-500/10 text-blue-500' },
+  equities: { label: 'Azioni', className: 'bg-blue-500/10 text-blue-500' },
   crypto: { label: 'Crypto', className: 'bg-orange-500/10 text-orange-500' },
-  commodities: { label: 'Commodities', className: 'bg-yellow-500/10 text-yellow-500' },
+  commodities: { label: 'Materie Prime', className: 'bg-yellow-500/10 text-yellow-500' },
   forex: { label: 'Forex', className: 'bg-green-500/10 text-green-500' },
   macro: { label: 'Macro', className: 'bg-purple-500/10 text-purple-500' },
   defi: { label: 'DeFi', className: 'bg-pink-500/10 text-pink-500' },
-  other: { label: 'Other', className: 'bg-gray-500/10 text-gray-500' },
+  other: { label: 'Altro', className: 'bg-gray-500/10 text-gray-500' },
 };
 
 export default function OpportunitiesPage() {
@@ -51,6 +51,7 @@ export default function OpportunitiesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
   const [movingId, setMovingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchOpportunities = useCallback(async () => {
     try {
@@ -60,7 +61,7 @@ export default function OpportunitiesPage() {
         setOpportunities(data.opportunities ?? []);
       }
     } catch {
-      // Silently fail - empty state will show
+      setError('Errore nel caricamento delle opportunita.');
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +88,7 @@ export default function OpportunitiesPage() {
         );
       }
     } catch {
-      // Silently fail
+      setError('Errore nello spostamento dell\'opportunita.');
     } finally {
       setMovingId(null);
     }
@@ -110,7 +111,7 @@ export default function OpportunitiesPage() {
         setIsAddFormOpen(false);
       }
     } catch {
-      // Silently fail
+      setError('Errore nella creazione dell\'opportunita.');
     }
   }
 
@@ -126,9 +127,9 @@ export default function OpportunitiesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Opportunities</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Opportunita'</h1>
           <p className="text-muted-foreground">
-            Track and manage investment opportunities through your pipeline.
+            Monitora e gestisci le opportunita' di investimento nella tua pipeline.
           </p>
         </div>
         <button
@@ -136,9 +137,16 @@ export default function OpportunitiesPage() {
           className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
         >
           <Plus className="h-4 w-4" />
-          Add Opportunity
+          Aggiungi Opportunita'
         </button>
       </div>
+
+      {error && (
+        <div className="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          {error}
+          <button onClick={() => setError(null)} className="ml-2 font-medium underline">Chiudi</button>
+        </div>
+      )}
 
       {/* Add Opportunity Form Modal */}
       {isAddFormOpen && (
@@ -175,7 +183,7 @@ export default function OpportunitiesPage() {
                 {columnOpps.length === 0 ? (
                   <div className="rounded-lg border border-dashed p-4 text-center">
                     <p className="text-xs text-muted-foreground">
-                      No opportunities
+                      Nessuna opportunita'
                     </p>
                   </div>
                 ) : (
@@ -262,7 +270,7 @@ function OpportunityCard({
           ) : (
             <ChevronDown className="h-3 w-3" />
           )}
-          Move to...
+          Sposta in...
         </button>
 
         {showStatusMenu && (
@@ -328,23 +336,23 @@ function AddOpportunityModal({
         aria-hidden="true"
       />
       <div className="relative z-50 w-full max-w-md rounded-lg border bg-background p-6 shadow-lg">
-        <h2 className="text-lg font-semibold mb-4">Add New Opportunity</h2>
+        <h2 className="text-lg font-semibold mb-4">Aggiungi Nuova Opportunita'</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Title *</label>
+            <label className="text-sm font-medium">Titolo *</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g., NVIDIA post-earnings dip"
+              placeholder="es. NVIDIA calo post-earnings"
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Module</label>
+            <label className="text-sm font-medium">Modulo</label>
             <select
               value={module}
               onChange={(e) => setModule(e.target.value)}
@@ -359,11 +367,11 @@ function AddOpportunityModal({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Thesis</label>
+            <label className="text-sm font-medium">Tesi</label>
             <textarea
               value={thesis}
               onChange={(e) => setThesis(e.target.value)}
-              placeholder="Brief investment thesis or rationale..."
+              placeholder="Breve tesi di investimento o motivazione..."
               rows={3}
               className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
             />
@@ -375,7 +383,7 @@ function AddOpportunityModal({
               onClick={onClose}
               className="rounded-md border border-input px-4 py-2 text-sm font-medium hover:bg-accent transition-colors"
             >
-              Cancel
+              Annulla
             </button>
             <button
               type="submit"
@@ -383,7 +391,7 @@ function AddOpportunityModal({
               className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
               {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              Add Opportunity
+              Aggiungi Opportunita'
             </button>
           </div>
         </form>

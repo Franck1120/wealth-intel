@@ -5,13 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   User,
   DollarSign,
-  Key,
   Calculator,
   Bell,
   LogOut,
   Loader2,
   Save,
   Check,
+  Trash2,
 } from 'lucide-react';
 
 interface UserProfile {
@@ -21,7 +21,6 @@ interface UserProfile {
 
 interface UserSettings {
   base_currency: string;
-  anthropic_api_key: string;
   tax_rate: number;
   loss_carryforward: number;
   notifications_email: boolean;
@@ -39,7 +38,6 @@ const CURRENCIES = [
 
 const DEFAULT_SETTINGS: UserSettings = {
   base_currency: 'EUR',
-  anthropic_api_key: '',
   tax_rate: 26,
   loss_carryforward: 0,
   notifications_email: true,
@@ -54,6 +52,7 @@ export default function SettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchSettings = useCallback(async () => {
     try {
@@ -64,7 +63,7 @@ export default function SettingsPage() {
         setSettings({ ...DEFAULT_SETTINGS, ...data.settings });
       }
     } catch {
-      setError('Failed to load settings');
+      setError('Errore nel caricamento delle impostazioni');
     } finally {
       setIsLoading(false);
     }
@@ -87,24 +86,46 @@ export default function SettingsPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save settings');
+        throw new Error('Errore nel salvataggio delle impostazioni');
       }
 
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save');
+      setError(err instanceof Error ? err.message : 'Errore nel salvataggio');
     } finally {
       setIsSaving(false);
     }
   }
 
   async function handleSignOut() {
+    if (!confirm('Sei sicuro di voler uscire?')) return;
     try {
       await fetch('/api/auth/signout', { method: 'POST' });
       window.location.href = '/login';
     } catch {
-      setError('Failed to sign out');
+      setError('Errore durante il logout');
+    }
+  }
+
+  async function handleDeleteAccount() {
+    const confirmed = confirm(
+      'Sei sicuro di voler eliminare il tuo account? Tutti i tuoi dati verranno cancellati permanentemente. Questa azione e\' irreversibile.'
+    );
+    if (!confirmed) return;
+
+    setIsDeleting(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/account', { method: 'DELETE' });
+      if (!response.ok) {
+        throw new Error('Impossibile eliminare l\'account');
+      }
+      window.location.href = '/login';
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Errore durante l\'eliminazione');
+      setIsDeleting(false);
     }
   }
 
@@ -127,9 +148,9 @@ export default function SettingsPage() {
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Impostazioni</h1>
           <p className="text-muted-foreground">
-            Manage your account preferences and configuration.
+            Gestisci le preferenze del tuo account e la configurazione.
           </p>
         </div>
         <button
@@ -144,7 +165,7 @@ export default function SettingsPage() {
           ) : (
             <Save className="h-4 w-4" />
           )}
-          {saveSuccess ? 'Saved' : 'Save Changes'}
+          {saveSuccess ? 'Salvato' : 'Salva Modifiche'}
         </button>
       </div>
 
@@ -172,11 +193,11 @@ export default function SettingsPage() {
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                Member Since
+                Membro Dal
               </label>
               <p className="text-sm mt-1">
                 {profile?.created_at
-                  ? new Date(profile.created_at).toLocaleDateString('en-US', {
+                  ? new Date(profile.created_at).toLocaleDateString('it-IT', {
                       month: 'long',
                       day: 'numeric',
                       year: 'numeric',
@@ -193,13 +214,13 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
-            Currency
+            Valuta
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2 max-w-xs">
             <label htmlFor="base-currency" className="text-sm font-medium">
-              Base Currency
+              Valuta Base
             </label>
             <select
               id="base-currency"
@@ -214,38 +235,7 @@ export default function SettingsPage() {
               ))}
             </select>
             <p className="text-xs text-muted-foreground">
-              All portfolio values and P&L will be displayed in this currency.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* API Keys */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Key className="h-5 w-5" />
-            API Keys
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="anthropic-key" className="text-sm font-medium">
-              Anthropic API Key
-            </label>
-            <input
-              id="anthropic-key"
-              type="password"
-              value={settings.anthropic_api_key}
-              onChange={(e) =>
-                updateSetting('anthropic_api_key', e.target.value)
-              }
-              placeholder="sk-ant-..."
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            />
-            <p className="text-xs text-muted-foreground">
-              Used for AI-powered analysis and report generation. Your key is
-              encrypted and stored securely.
+              Tutti i valori del portafoglio e il P&L saranno visualizzati in questa valuta.
             </p>
           </div>
         </CardContent>
@@ -256,14 +246,14 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Calculator className="h-5 w-5" />
-            Tax Configuration
+            Configurazione Fiscale
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <label htmlFor="tax-rate" className="text-sm font-medium">
-                Capital Gains Tax Rate (%)
+                Aliquota Capital Gain (%)
               </label>
               <input
                 id="tax-rate"
@@ -278,7 +268,7 @@ export default function SettingsPage() {
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
               <p className="text-xs text-muted-foreground">
-                Italy default: 26% (imposta sostitutiva)
+                Default Italia: 26% (imposta sostitutiva)
               </p>
             </div>
 
@@ -287,7 +277,7 @@ export default function SettingsPage() {
                 htmlFor="loss-carryforward"
                 className="text-sm font-medium"
               >
-                Loss Carryforward Amount
+                Importo Minusvalenze Pregresse
               </label>
               <input
                 id="loss-carryforward"
@@ -304,8 +294,8 @@ export default function SettingsPage() {
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
               <p className="text-xs text-muted-foreground">
-                Capital losses from previous years that can offset future gains
-                (valid for 4 years in Italy).
+                Minusvalenze degli anni precedenti che possono compensare guadagni
+                futuri (valide per 4 anni in Italia).
               </p>
             </div>
           </div>
@@ -317,25 +307,25 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Bell className="h-5 w-5" />
-            Notifications
+            Notifiche
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <NotificationToggle
-            label="Email Notifications"
-            description="Receive alert notifications via email"
+            label="Notifiche Email"
+            description="Ricevi notifiche degli avvisi via email"
             checked={settings.notifications_email}
             onChange={(val) => updateSetting('notifications_email', val)}
           />
           <NotificationToggle
-            label="Browser Notifications"
-            description="Push notifications in your browser (requires permission)"
+            label="Notifiche Browser"
+            description="Notifiche push nel tuo browser (richiede autorizzazione)"
             checked={settings.notifications_browser}
             onChange={(val) => updateSetting('notifications_browser', val)}
           />
           <NotificationToggle
-            label="Weekly Report Email"
-            description="Receive the weekly portfolio summary report by email"
+            label="Email Report Settimanale"
+            description="Ricevi il report settimanale del portafoglio via email"
             checked={settings.notifications_weekly_report}
             onChange={(val) =>
               updateSetting('notifications_weekly_report', val)
@@ -349,9 +339,9 @@ export default function SettingsPage() {
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium">Sign Out</h3>
+              <h3 className="font-medium">Esci</h3>
               <p className="text-sm text-muted-foreground">
-                End your current session and return to the login page.
+                Termina la sessione corrente e torna alla pagina di login.
               </p>
             </div>
             <button
@@ -359,7 +349,34 @@ export default function SettingsPage() {
               className="inline-flex items-center gap-2 rounded-md border border-destructive px-4 py-2 text-sm font-medium text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
             >
               <LogOut className="h-4 w-4" />
-              Sign Out
+              Esci
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Elimina Account */}
+      <Card className="border-destructive">
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-medium text-destructive">Elimina Account</h3>
+              <p className="text-sm text-muted-foreground">
+                Elimina permanentemente il tuo account e tutti i dati associati.
+                Questa azione e&apos; irreversibile.
+              </p>
+            </div>
+            <button
+              onClick={handleDeleteAccount}
+              disabled={isDeleting}
+              className="inline-flex items-center gap-2 rounded-md bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50 transition-colors"
+            >
+              {isDeleting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Trash2 className="h-4 w-4" />
+              )}
+              Elimina Account
             </button>
           </div>
         </CardContent>

@@ -10,8 +10,6 @@ import {
   Gem,
 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
-
 interface MarketModule {
   title: string;
   description: string;
@@ -60,8 +58,8 @@ export default async function MarketsPage() {
 
   const modules: MarketModule[] = [
     {
-      title: 'Equities',
-      description: 'Stocks, ETFs, and equity indices',
+      title: 'Azioni',
+      description: 'Azioni, ETF e indici azionari',
       href: '/markets/equities',
       icon: <BarChart3 className="h-6 w-6" />,
       stats: [
@@ -79,7 +77,7 @@ export default async function MarketsPage() {
     },
     {
       title: 'Crypto',
-      description: 'Cryptocurrencies and DeFi protocols',
+      description: 'Criptovalute e protocolli DeFi',
       href: '/markets/crypto',
       icon: <Bitcoin className="h-6 w-6" />,
       stats: [
@@ -101,7 +99,7 @@ export default async function MarketsPage() {
     },
     {
       title: 'Macro',
-      description: 'Economic indicators and central bank policy',
+      description: 'Indicatori economici e politica delle banche centrali',
       href: '/markets/macro',
       icon: <Landmark className="h-6 w-6" />,
       stats: [
@@ -120,8 +118,8 @@ export default async function MarketsPage() {
       ],
     },
     {
-      title: 'Commodities',
-      description: 'Gold, silver, oil, and natural gas',
+      title: 'Materie Prime',
+      description: 'Oro, argento, petrolio e gas naturale',
       href: '/markets/commodities',
       icon: <Gem className="h-6 w-6" />,
       stats: [
@@ -139,7 +137,7 @@ export default async function MarketsPage() {
     },
     {
       title: 'Forex',
-      description: 'Major currency pairs and exchange rates',
+      description: 'Principali coppie valutarie e tassi di cambio',
       href: '/markets/forex',
       icon: <DollarSign className="h-6 w-6" />,
       stats: [
@@ -160,9 +158,9 @@ export default async function MarketsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Markets</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Mercati</h1>
         <p className="text-muted-foreground">
-          Real-time market data across all asset classes.
+          Dati di mercato in tempo reale per tutte le classi di asset.
         </p>
       </div>
 

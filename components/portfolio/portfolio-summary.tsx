@@ -40,7 +40,7 @@ export function PortfolioSummary({
         <CardContent className="pt-6">
           <div className="flex items-center gap-2 mb-2">
             <DollarSign className="h-4 w-4 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Total Value</p>
+            <p className="text-sm text-muted-foreground">Valore Totale</p>
           </div>
           <p className="text-2xl font-bold tabular-nums">
             {formatCurrency(totalValue)}
@@ -53,7 +53,7 @@ export function PortfolioSummary({
         <CardContent className="pt-6">
           <div className="flex items-center gap-2 mb-2">
             <DollarSign className="h-4 w-4 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Total Cost</p>
+            <p className="text-sm text-muted-foreground">Costo Totale</p>
           </div>
           <p className="text-2xl font-bold tabular-nums">
             {formatCurrency(totalCost)}
@@ -70,7 +70,7 @@ export function PortfolioSummary({
             ) : (
               <TrendingDown className="h-4 w-4 text-red-500" />
             )}
-            <p className="text-sm text-muted-foreground">Total P&L</p>
+            <p className="text-sm text-muted-foreground">P&L Totale</p>
           </div>
           <p
             className={`text-2xl font-bold tabular-nums ${
@@ -94,7 +94,7 @@ export function PortfolioSummary({
         <CardContent className="pt-6">
           <div className="flex items-center gap-2 mb-2">
             <Activity className="h-4 w-4 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Day Change</p>
+            <p className="text-sm text-muted-foreground">Variazione Giornaliera</p>
           </div>
           <p
             className={`text-2xl font-bold tabular-nums ${
@@ -111,7 +111,7 @@ export function PortfolioSummary({
         <CardContent className="pt-6">
           <div className="flex items-center gap-2 mb-2">
             <Trophy className="h-4 w-4 text-emerald-500" />
-            <p className="text-sm text-muted-foreground">Best</p>
+            <p className="text-sm text-muted-foreground">Migliore</p>
           </div>
           {bestPerformer ? (
             <>
@@ -131,7 +131,7 @@ export function PortfolioSummary({
         <CardContent className="pt-6">
           <div className="flex items-center gap-2 mb-2">
             <AlertTriangle className="h-4 w-4 text-red-500" />
-            <p className="text-sm text-muted-foreground">Worst</p>
+            <p className="text-sm text-muted-foreground">Peggiore</p>
           </div>
           {worstPerformer ? (
             <>

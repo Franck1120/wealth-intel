@@ -10,11 +10,11 @@ import { Plus, Loader2 } from 'lucide-react';
 const createPortfolioSchema = z.object({
   name: z
     .string()
-    .min(1, 'Portfolio name is required')
-    .max(100, 'Name must be 100 characters or less'),
+    .min(1, 'Il nome del portafoglio e\' obbligatorio')
+    .max(100, 'Il nome deve essere di massimo 100 caratteri'),
   description: z
     .string()
-    .max(500, 'Description must be 500 characters or less')
+    .max(500, 'La descrizione deve essere di massimo 500 caratteri')
     .optional(),
 });
 
@@ -54,7 +54,7 @@ export function CreatePortfolioButton({
 
       if (!response.ok) {
         const body = await response.json().catch(() => null);
-        throw new Error(body?.error ?? 'Failed to create portfolio');
+        throw new Error(body?.error ?? 'Errore nella creazione del portafoglio');
       }
 
       reset();
@@ -62,7 +62,7 @@ export function CreatePortfolioButton({
       router.refresh();
     } catch (err) {
       setServerError(
-        err instanceof Error ? err.message : 'An unexpected error occurred'
+        err instanceof Error ? err.message : 'Si e\' verificato un errore imprevisto'
       );
     } finally {
       setIsSubmitting(false);
@@ -86,7 +86,7 @@ export function CreatePortfolioButton({
         }`}
       >
         <Plus className="h-4 w-4" />
-        Create Portfolio
+        Crea Portafoglio
       </button>
 
       {isOpen && (
@@ -100,9 +100,9 @@ export function CreatePortfolioButton({
 
           {/* Dialog */}
           <div className="relative z-50 w-full max-w-md rounded-lg border bg-background p-6 shadow-lg">
-            <h2 className="text-lg font-semibold mb-1">Create New Portfolio</h2>
+            <h2 className="text-lg font-semibold mb-1">Crea Nuovo Portafoglio</h2>
             <p className="text-sm text-muted-foreground mb-6">
-              Give your portfolio a name and optional description.
+              Dai un nome al tuo portafoglio e una descrizione opzionale.
             </p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -111,12 +111,12 @@ export function CreatePortfolioButton({
                   htmlFor="portfolio-name"
                   className="text-sm font-medium leading-none"
                 >
-                  Name <span className="text-destructive">*</span>
+                  Nome <span className="text-destructive">*</span>
                 </label>
                 <input
                   id="portfolio-name"
                   type="text"
-                  placeholder="e.g., Long-term Growth, Crypto Allocation"
+                  placeholder="es. Crescita a Lungo Termine, Allocazione Crypto"
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   {...register('name')}
                 />
@@ -130,11 +130,11 @@ export function CreatePortfolioButton({
                   htmlFor="portfolio-description"
                   className="text-sm font-medium leading-none"
                 >
-                  Description
+                  Descrizione
                 </label>
                 <textarea
                   id="portfolio-description"
-                  placeholder="Optional: describe the strategy or purpose of this portfolio"
+                  placeholder="Opzionale: descrivi la strategia o lo scopo di questo portafoglio"
                   rows={3}
                   className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
                   {...register('description')}
@@ -158,7 +158,7 @@ export function CreatePortfolioButton({
                   onClick={handleClose}
                   className="rounded-md border border-input px-4 py-2 text-sm font-medium hover:bg-accent transition-colors"
                 >
-                  Cancel
+                  Annulla
                 </button>
                 <button
                   type="submit"
@@ -166,7 +166,7 @@ export function CreatePortfolioButton({
                   className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors"
                 >
                   {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Create Portfolio
+                  Crea Portafoglio
                 </button>
               </div>
             </form>

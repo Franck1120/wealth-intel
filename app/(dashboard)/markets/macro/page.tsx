@@ -1,6 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MacroIndicatorChart } from '@/components/charts/macro-indicator-chart';
+import dynamic from 'next/dynamic';
 import {
   Landmark,
   TrendingUp,
@@ -8,7 +8,10 @@ import {
   BarChart3,
 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+const MacroIndicatorChart = dynamic(
+  () => import('@/components/charts/macro-indicator-chart').then((m) => ({ default: m.MacroIndicatorChart })),
+  { loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" /> },
+);
 
 interface MacroIndicator {
   id: string;
@@ -70,10 +73,10 @@ export default async function MacroPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
-          Macro Indicators
+          Indicatori Macro
         </h1>
         <p className="text-muted-foreground">
-          Key economic indicators and central bank policy data.
+          Principali indicatori economici e dati sulla politica delle banche centrali.
         </p>
       </div>
 
@@ -83,10 +86,10 @@ export default async function MacroPage() {
           <Card className="col-span-full border-dashed">
             <CardContent className="flex flex-col items-center justify-center py-12">
               <Landmark className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No macro data yet</h3>
+              <h3 className="text-lg font-semibold mb-2">Nessun dato macro disponibile</h3>
               <p className="text-muted-foreground text-center max-w-sm">
-                Macro indicators will appear here once the data pipeline
-                fetches the latest economic data from official sources.
+                Gli indicatori macro appariranno qui quando la pipeline dati
+                avra' scaricato i dati economici piu' recenti dalle fonti ufficiali.
               </p>
             </CardContent>
           </Card>
@@ -130,11 +133,11 @@ export default async function MacroPage() {
                     >
                       {change > 0 ? '+' : ''}
                       {change.toFixed(2)}
-                      {indicator.unit === '%' ? 'pp' : ''} vs previous
+                      {indicator.unit === '%' ? 'pp' : ''} vs precedente
                     </p>
                   )}
                   <p className="text-xs text-muted-foreground mt-2">
-                    Source: {indicator.source} | Updated:{' '}
+                    Fonte: {indicator.source} | Aggiornato:{' '}
                     {new Date(indicator.updated_at).toLocaleDateString()}
                   </p>
                 </CardContent>
@@ -150,7 +153,7 @@ export default async function MacroPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Landmark className="h-5 w-5" />
-              EURIBOR Rates
+              Tassi EURIBOR
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -189,7 +192,7 @@ export default async function MacroPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5" />
-            Historical Trends
+            Trend Storici
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -198,8 +201,8 @@ export default async function MacroPage() {
           ) : (
             <div className="flex items-center justify-center h-64">
               <p className="text-muted-foreground">
-                Historical chart data will be available after the first data
-                pipeline run.
+                I dati storici dei grafici saranno disponibili dopo la prima
+                esecuzione della pipeline dati.
               </p>
             </div>
           )}
@@ -210,7 +213,7 @@ export default async function MacroPage() {
       {indicatorList.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>All Indicators</CardTitle>
+            <CardTitle>Tutti gli Indicatori</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -218,22 +221,22 @@ export default async function MacroPage() {
                 <thead className="border-b">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Indicator
+                      Indicatore
                     </th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Current
+                      Attuale
                     </th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Previous
+                      Precedente
                     </th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Change
+                      Variazione
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Source
+                      Fonte
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Updated
+                      Aggiornato
                     </th>
                   </tr>
                 </thead>

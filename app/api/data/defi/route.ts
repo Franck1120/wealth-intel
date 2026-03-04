@@ -247,7 +247,9 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.json(result);
+  const response = NextResponse.json(result);
+  response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+  return response;
 }
 
 /**
@@ -270,29 +272,31 @@ async function fetchProtocolDetail(
     .maybeSingle();
 
   if (cached?.data) {
-    return NextResponse.json({
+    const cachedRes = NextResponse.json({
       data: JSON.parse(cached.data as string),
       source: 'cache',
     });
+    cachedRes.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+    return cachedRes;
   }
 
   try {
-    const response = await fetch(
+    const fetchRes = await fetch(
       `${DEFILLAMA_BASE_URL}/protocol/${encodeURIComponent(slug)}`,
       { next: { revalidate: CACHE_DURATION_HOURS * 3600 } },
     );
 
-    if (!response.ok) {
-      if (response.status === 404) {
+    if (!fetchRes.ok) {
+      if (fetchRes.status === 404) {
         return NextResponse.json(
           { error: `Protocol not found: ${slug}` },
           { status: 404 },
         );
       }
-      throw new Error(`DeFi Llama API returned ${response.status}`);
+      throw new Error(`DeFi Llama API returned ${fetchRes.status}`);
     }
 
-    const protocolData = await response.json();
+    const protocolData = await fetchRes.json();
     const now = new Date().toISOString();
 
     // Extract relevant fields
@@ -331,10 +335,12 @@ async function fetchProtocolDetail(
       console.error('Protocol detail cache error:', upsertError.message);
     }
 
-    return NextResponse.json({
+    const freshRes = NextResponse.json({
       data: detail,
       source: 'fresh',
     });
+    freshRes.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+    return freshRes;
   } catch (err) {
     const message =
       err instanceof Error ? err.message : 'Unknown error';

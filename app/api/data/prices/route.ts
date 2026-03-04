@@ -88,10 +88,12 @@ export async function GET(request: NextRequest) {
 
   // If all symbols are fresh, return cached data
   if (staleSymbols.length === 0) {
-    return NextResponse.json({
+    const response = NextResponse.json({
       data: cached ?? [],
       source: 'cache',
     });
+    response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+    return response;
   }
 
   // Fetch stale symbols from the appropriate provider
@@ -141,11 +143,13 @@ export async function GET(request: NextRequest) {
     (c) => !freshSymbols.has(c.asset_symbol),
   );
 
-  return NextResponse.json({
+  const response = NextResponse.json({
     data: [...dedupedCached, ...freshPrices],
     source: freshPrices.length > 0 ? 'mixed' : 'cache',
     fetched_count: freshPrices.length,
   });
+  response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+  return response;
 }
 
 /**

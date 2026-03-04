@@ -3,8 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency, formatPercent } from '@/lib/utils';
 import { FileText, TrendingUp, TrendingDown, Bell, BarChart3 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
-
 interface WeeklyReport {
   id: string;
   week_start: string;
@@ -47,9 +45,9 @@ export default async function ReportsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Weekly Reports</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Report Settimanali</h1>
         <p className="text-muted-foreground">
-          Automated weekly summaries of your portfolio and market activity.
+          Riepiloghi settimanali automatici del tuo portafoglio e attivita' di mercato.
         </p>
       </div>
 
@@ -57,11 +55,10 @@ export default async function ReportsPage() {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16">
             <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No reports yet</h3>
+            <h3 className="text-lg font-semibold mb-2">Nessun report disponibile</h3>
             <p className="text-muted-foreground text-center max-w-sm">
-              Weekly reports are generated automatically every Sunday. Your
-              first report will appear after the system runs its weekly
-              analysis.
+              I report settimanali vengono generati automaticamente ogni domenica.
+              Il tuo primo report apparira' dopo l'esecuzione dell'analisi settimanale.
             </p>
           </CardContent>
         </Card>
@@ -76,10 +73,10 @@ export default async function ReportsPage() {
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-base">
-                      Week of {weekLabel}
+                      Settimana del {weekLabel}
                     </CardTitle>
                     <time className="text-xs text-muted-foreground">
-                      Generated{' '}
+                      Generato il{' '}
                       {new Date(report.created_at).toLocaleDateString()}
                     </time>
                   </div>
@@ -90,7 +87,7 @@ export default async function ReportsPage() {
                     {/* Portfolio Value */}
                     <div className="rounded-md border p-3">
                       <p className="text-xs text-muted-foreground mb-1">
-                        Portfolio Value
+                        Valore Portafoglio
                       </p>
                       <p className="text-lg font-bold tabular-nums">
                         {formatCurrency(report.summary.portfolio_value)}
@@ -100,7 +97,7 @@ export default async function ReportsPage() {
                     {/* Week Change */}
                     <div className="rounded-md border p-3">
                       <p className="text-xs text-muted-foreground mb-1">
-                        Week Change
+                        Variazione Settimanale
                       </p>
                       <p
                         className={`text-lg font-bold tabular-nums ${
@@ -117,7 +114,7 @@ export default async function ReportsPage() {
                     {/* Alerts Triggered */}
                     <div className="rounded-md border p-3">
                       <p className="text-xs text-muted-foreground mb-1">
-                        Alerts Triggered
+                        Avvisi Attivati
                       </p>
                       <div className="flex items-center gap-2">
                         <Bell className="h-4 w-4 text-muted-foreground" />
@@ -130,7 +127,7 @@ export default async function ReportsPage() {
                     {/* Score Changes */}
                     <div className="rounded-md border p-3">
                       <p className="text-xs text-muted-foreground mb-1">
-                        Score Changes
+                        Variazioni Punteggio
                       </p>
                       <div className="flex items-center gap-2">
                         <BarChart3 className="h-4 w-4 text-muted-foreground" />
@@ -144,7 +141,7 @@ export default async function ReportsPage() {
                   {/* Top Movers */}
                   {report.top_movers.length > 0 && (
                     <div className="mb-4">
-                      <h4 className="text-sm font-medium mb-2">Top Movers</h4>
+                      <h4 className="text-sm font-medium mb-2">Migliori/Peggiori</h4>
                       <div className="flex flex-wrap gap-2">
                         {report.top_movers.map((mover) => {
                           const moverPositive = mover.change_pct >= 0;
@@ -182,7 +179,7 @@ export default async function ReportsPage() {
                   {report.score_changes.length > 0 && (
                     <div className="mb-4">
                       <h4 className="text-sm font-medium mb-2">
-                        Score Changes
+                        Variazioni Punteggio
                       </h4>
                       <div className="flex flex-wrap gap-2">
                         {report.score_changes.map((sc) => {
@@ -219,7 +216,7 @@ export default async function ReportsPage() {
                   {report.macro_highlights.length > 0 && (
                     <div className="mb-4">
                       <h4 className="text-sm font-medium mb-2">
-                        Macro Highlights
+                        Highlights Macro
                       </h4>
                       <ul className="space-y-1">
                         {report.macro_highlights.map((highlight, idx) => (
@@ -239,7 +236,7 @@ export default async function ReportsPage() {
                   {report.narrative && (
                     <div className="rounded-md bg-muted p-4">
                       <h4 className="text-sm font-medium mb-2">
-                        Weekly Analysis
+                        Analisi Settimanale
                       </h4>
                       <p className="text-sm leading-relaxed text-muted-foreground">
                         {report.narrative}
@@ -257,7 +254,7 @@ export default async function ReportsPage() {
 }
 
 function formatWeekDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  return new Date(dateStr).toLocaleDateString('it-IT', {
     month: 'short',
     day: 'numeric',
   });

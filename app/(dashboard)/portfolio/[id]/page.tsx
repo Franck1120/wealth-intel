@@ -5,10 +5,18 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { PortfolioSummary } from '@/components/portfolio/portfolio-summary';
 import { HoldingsTable } from '@/components/portfolio/holdings-table';
-import { AllocationChart } from '@/components/charts/allocation-chart';
-import { AssetPriceChart as PriceChart } from '@/components/charts/asset-price-chart';
+import { AddTransactionButton } from '@/components/portfolio/add-transaction-button';
+import dynamic from 'next/dynamic';
 
-export const dynamic = 'force-dynamic';
+const AllocationChart = dynamic(
+  () => import('@/components/charts/allocation-chart').then((m) => ({ default: m.AllocationChart })),
+  { loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" /> },
+);
+
+const PriceChart = dynamic(
+  () => import('@/components/charts/asset-price-chart').then((m) => ({ default: m.AssetPriceChart })),
+  { loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" /> },
+);
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -135,7 +143,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
             className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back
+            Indietro
           </Link>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
@@ -148,12 +156,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
             )}
           </div>
         </div>
-        <Link
-          href={`/portfolio/${id}/transaction`}
-          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-        >
-          Add Transaction
-        </Link>
+        <AddTransactionButton portfolioId={id} />
       </div>
 
       {/* Summary Cards */}
@@ -179,7 +182,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
       {holdingsWithAllocation.length > 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>Holdings</CardTitle>
+            <CardTitle>Posizioni</CardTitle>
           </CardHeader>
           <CardContent>
             <HoldingsTable holdings={holdingsWithAllocation} />
@@ -189,14 +192,9 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <p className="text-muted-foreground mb-4">
-              No holdings yet. Add your first transaction to get started.
+              Nessuna posizione. Aggiungi la tua prima transazione per iniziare.
             </p>
-            <Link
-              href={`/portfolio/${id}/transaction`}
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              Add Transaction
-            </Link>
+            <AddTransactionButton portfolioId={id} />
           </CardContent>
         </Card>
       )}
@@ -207,7 +205,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
           {/* Allocation Pie Chart */}
           <Card>
             <CardHeader>
-              <CardTitle>Allocation</CardTitle>
+              <CardTitle>Allocazione</CardTitle>
             </CardHeader>
             <CardContent>
               <AllocationChart data={allocationData} />
@@ -218,7 +216,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
           <Card>
             <CardHeader>
               <CardTitle>
-                Price Chart
+                Grafico Prezzo
                 {defaultChartAsset && (
                   <span className="ml-2 text-sm font-normal text-muted-foreground">
                     {defaultChartAsset.symbol}
@@ -231,7 +229,7 @@ export default async function PortfolioDetailPage({ params }: PageProps) {
                 <PriceChart assetId={defaultChartAsset.assetId} />
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  No data available
+                  Nessun dato disponibile
                 </p>
               )}
             </CardContent>

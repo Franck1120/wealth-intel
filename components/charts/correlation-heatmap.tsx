@@ -46,7 +46,7 @@ export function CorrelationHeatmap({ symbols, matrix }: CorrelationHeatmapProps)
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Cross-Asset Correlations</CardTitle>
+        <CardTitle>Correlazioni tra Asset</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">

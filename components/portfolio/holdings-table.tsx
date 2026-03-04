@@ -115,13 +115,13 @@ export function HoldingsTable({ holdings }: HoldingsTableProps) {
         <thead className="border-b">
           <tr>
             <SortableHeader field="symbol" label="Asset" align="left" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
-            <SortableHeader field="quantity" label="Quantity" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
-            <SortableHeader field="avgCost" label="Avg Cost" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
-            <SortableHeader field="currentPrice" label="Price" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
-            <SortableHeader field="marketValue" label="Market Value" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+            <SortableHeader field="quantity" label="Quantita'" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+            <SortableHeader field="avgCost" label="Costo Medio" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+            <SortableHeader field="currentPrice" label="Prezzo" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+            <SortableHeader field="marketValue" label="Valore Mercato" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
             <SortableHeader field="pnl" label="P&L" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
             <SortableHeader field="pnlPercent" label="P&L %" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
-            <SortableHeader field="allocation" label="Allocation" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
+            <SortableHeader field="allocation" label="Allocazione" sortField={sortField} sortDirection={sortDirection} onSort={handleSort} />
           </tr>
         </thead>
         <tbody className="divide-y">
@@ -209,7 +209,7 @@ export function HoldingsTable({ holdings }: HoldingsTableProps) {
         {/* Totals Footer */}
         <tfoot className="border-t-2 font-medium">
           <tr>
-            <td className="px-4 py-3 text-left">Total</td>
+            <td className="px-4 py-3 text-left">Totale</td>
             <td className="px-4 py-3" />
             <td className="px-4 py-3" />
             <td className="px-4 py-3" />

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import yahooFinance from 'yahoo-finance2';
+import { rateLimit } from '@/lib/rate-limit';
 
 interface SearchQuote {
   symbol: string;
@@ -15,6 +16,15 @@ interface SearchQuote {
  * Search for assets using Yahoo Finance.
  */
 export async function GET(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'anonymous';
+  const rateLimitResult = await rateLimit(`search:${ip}`, 20, 60_000);
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Troppe richieste. Riprova tra poco.' },
+      { status: 429 },
+    );
+  }
+
   const query = request.nextUrl.searchParams.get('q');
 
   if (!query || query.length < 1) {

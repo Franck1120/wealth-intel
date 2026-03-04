@@ -17,6 +17,27 @@ export function formatNumber(value: number, decimals = 2): string {
   return new Intl.NumberFormat('it-IT', { maximumFractionDigits: decimals }).format(value);
 }
 
-export function formatCompactNumber(value: number): string {
-  return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
+/** Split array into chunks of given size */
+export function chunk<T>(arr: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
+}
+
+/** Delay execution for ms milliseconds */
+export function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Compute daily returns from price array */
+export function computeDailyReturns(prices: number[]): number[] {
+  const returns: number[] = [];
+  for (let i = 1; i < prices.length; i++) {
+    if (prices[i - 1] !== 0) {
+      returns.push((prices[i] - prices[i - 1]) / prices[i - 1]);
+    }
+  }
+  return returns;
 }

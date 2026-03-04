@@ -77,23 +77,25 @@ export async function GET() {
     .maybeSingle();
 
   if (cached) {
-    return NextResponse.json({
+    const cachedRes = NextResponse.json({
       data: cached,
       source: 'cache',
     });
+    cachedRes.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=7200');
+    return cachedRes;
   }
 
   // Fetch fresh data from alternative.me
   try {
-    const response = await fetch(ALTERNATIVE_ME_API, {
+    const fetchRes = await fetch(ALTERNATIVE_ME_API, {
       next: { revalidate: CACHE_DURATION_HOURS * 3600 },
     });
 
-    if (!response.ok) {
-      throw new Error(`Alternative.me API returned ${response.status}`);
+    if (!fetchRes.ok) {
+      throw new Error(`Alternative.me API returned ${fetchRes.status}`);
     }
 
-    const result = (await response.json()) as FearGreedResponse;
+    const result = (await fetchRes.json()) as FearGreedResponse;
 
     if (result.metadata?.error) {
       throw new Error(result.metadata.error);
@@ -147,7 +149,7 @@ export async function GET() {
       console.error('Sentiment cache upsert error:', upsertError.message);
     }
 
-    return NextResponse.json({
+    const freshRes = NextResponse.json({
       data: {
         ...sentimentRecord,
         trend,
@@ -155,6 +157,8 @@ export async function GET() {
       },
       source: 'fresh',
     });
+    freshRes.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=7200');
+    return freshRes;
   } catch (fetchError) {
     const message =
       fetchError instanceof Error

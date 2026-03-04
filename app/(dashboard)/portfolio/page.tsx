@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { CreatePortfolioButton } from '@/components/portfolio/create-portfolio-button';
 import { Briefcase, TrendingUp, TrendingDown } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
-
 interface Holding {
   id: string;
   quantity: number;
@@ -53,9 +51,9 @@ export default async function PortfolioPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Portfolio</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Portafoglio</h1>
           <p className="text-muted-foreground">
-            Manage your investment portfolios and track performance.
+            Gestisci i tuoi portafogli di investimento e monitora le performance.
           </p>
         </div>
         <CreatePortfolioButton />
@@ -65,7 +63,7 @@ export default async function PortfolioPage() {
         <Card className="border-destructive">
           <CardContent className="pt-6">
             <p className="text-destructive text-sm">
-              Failed to load portfolios. Please try again later.
+              Errore nel caricamento dei portafogli. Riprova piu' tardi.
             </p>
           </CardContent>
         </Card>
@@ -75,10 +73,10 @@ export default async function PortfolioPage() {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16">
             <Briefcase className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No portfolios yet</h3>
+            <h3 className="text-lg font-semibold mb-2">Nessun portafoglio</h3>
             <p className="text-muted-foreground text-center mb-6 max-w-sm">
-              Create your first portfolio to start tracking your investments,
-              gains, and performance across all your assets.
+              Crea il tuo primo portafoglio per iniziare a monitorare i tuoi
+              investimenti, i guadagni e le performance di tutti i tuoi asset.
             </p>
             <CreatePortfolioButton variant="default" />
           </CardContent>
@@ -96,8 +94,7 @@ export default async function PortfolioPage() {
                     <CardTitle className="text-lg flex items-center justify-between">
                       <span className="truncate">{portfolio.name}</span>
                       <span className="text-xs text-muted-foreground font-normal">
-                        {portfolio.holdings.length} holding
-                        {portfolio.holdings.length !== 1 ? 's' : ''}
+                        {portfolio.holdings.length} posizion{portfolio.holdings.length !== 1 ? 'i' : 'e'}
                       </span>
                     </CardTitle>
                     {portfolio.description && (
@@ -108,14 +105,14 @@ export default async function PortfolioPage() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div>
-                      <p className="text-sm text-muted-foreground">Total Value</p>
+                      <p className="text-sm text-muted-foreground">Valore Totale</p>
                       <p className="text-2xl font-bold">
                         {formatCurrency(stats.totalValue)}
                       </p>
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Total P&L</p>
+                        <p className="text-sm text-muted-foreground">P&L Totale</p>
                         <div className="flex items-center gap-1">
                           {isPositive ? (
                             <TrendingUp className="h-4 w-4 text-emerald-500" />
@@ -132,7 +129,7 @@ export default async function PortfolioPage() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm text-muted-foreground">Return</p>
+                        <p className="text-sm text-muted-foreground">Rendimento</p>
                         <span
                           className={`font-semibold ${
                             isPositive ? 'text-emerald-500' : 'text-red-500'

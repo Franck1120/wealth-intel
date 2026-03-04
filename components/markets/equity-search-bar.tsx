@@ -17,6 +17,7 @@ export function EquitySearchBar() {
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [addingSymbol, setAddingSymbol] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const search = useCallback(async (searchQuery: string) => {
@@ -37,7 +38,7 @@ export function EquitySearchBar() {
         setShowResults(true);
       }
     } catch {
-      // Silently fail
+      setError('Errore nella ricerca.');
     } finally {
       setIsSearching(false);
     }
@@ -58,7 +59,7 @@ export function EquitySearchBar() {
         setQuery('');
       }
     } catch {
-      // Silently fail
+      setError('Errore nell\'aggiunta alla watchlist.');
     } finally {
       setAddingSymbol(null);
     }
@@ -78,13 +79,20 @@ export function EquitySearchBar() {
           onFocus={() => {
             if (results.length > 0) setShowResults(true);
           }}
-          placeholder="Search stocks, ETFs, indices..."
+          placeholder="Cerca azioni, ETF, indici..."
           className="flex h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
         {isSearching && (
           <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
         )}
       </div>
+
+      {error && (
+        <div className="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-400 mt-2">
+          {error}
+          <button onClick={() => setError(null)} className="ml-2 font-medium underline">Chiudi</button>
+        </div>
+      )}
 
       {showResults && results.length > 0 && (
         <>
@@ -117,7 +125,7 @@ export function EquitySearchBar() {
                   ) : (
                     <Plus className="h-3 w-3" />
                   )}
-                  Add
+                  Aggiungi
                 </button>
               </div>
             ))}
@@ -133,7 +141,7 @@ export function EquitySearchBar() {
           />
           <div className="absolute z-20 w-full mt-1 rounded-md border bg-background shadow-lg p-4 text-center">
             <p className="text-sm text-muted-foreground">
-              No results found for &quot;{query}&quot;
+              Nessun risultato per &quot;{query}&quot;
             </p>
           </div>
         </>

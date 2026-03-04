@@ -6,10 +6,10 @@ import { LayoutDashboard, Wallet, TrendingUp, Target, BookOpen } from 'lucide-re
 
 const MOBILE_NAV_ITEMS = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { label: 'Portfolio', href: '/portfolio', icon: Wallet },
-  { label: 'Markets', href: '/markets', icon: TrendingUp },
-  { label: 'Opportunita', href: '/opportunities', icon: Target },
-  { label: 'Journal', href: '/journal', icon: BookOpen },
+  { label: 'Portafoglio', href: '/portfolio', icon: Wallet },
+  { label: 'Mercati', href: '/markets', icon: TrendingUp },
+  { label: "Opportunita'", href: '/opportunities', icon: Target },
+  { label: 'Diario', href: '/journal', icon: BookOpen },
 ] as const;
 
 export function MobileNav() {
@@ -26,7 +26,7 @@ export function MobileNav() {
             <li key={item.href}>
               <Link
                 href={item.href}
-                className={`flex flex-col items-center gap-1 px-3 py-2.5 text-xs font-medium transition-colors ${
+                className={`flex flex-col items-center gap-1 px-3 py-2.5 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none ${
                   isActive ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >

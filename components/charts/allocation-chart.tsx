@@ -70,7 +70,7 @@ export function AllocationChart({ data }: AllocationChartProps) {
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-sm text-muted-foreground">No allocation data</p>
+        <p className="text-sm text-muted-foreground">Nessun dato di allocazione</p>
       </div>
     );
   }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { scoreEquity, scoreCrypto, scoreCommodity, type ScoringResult } from '@/lib/scoring/engine';
 import type { Json } from '@/lib/supabase/types';
+import { chunk, delay, computeDailyReturns } from '@/lib/utils';
 
 const BATCH_SIZE = 5;
 const BATCH_DELAY_MS = 1000;
@@ -29,34 +30,6 @@ interface ScoreResult {
   asset_id: string;
   overall_score: number;
   dimensions: Json;
-}
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-/**
- * Splits an array into chunks of the given size.
- */
-function chunk<T>(arr: T[], size: number): T[][] {
-  const chunks: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) {
-    chunks.push(arr.slice(i, i + size));
-  }
-  return chunks;
-}
-
-/**
- * Compute daily percentage returns from an array of close prices.
- */
-function computeDailyReturns(prices: number[]): number[] {
-  const returns: number[] = [];
-  for (let i = 1; i < prices.length; i++) {
-    if (prices[i - 1] !== 0) {
-      returns.push((prices[i] - prices[i - 1]) / prices[i - 1]);
-    }
-  }
-  return returns;
 }
 
 /**

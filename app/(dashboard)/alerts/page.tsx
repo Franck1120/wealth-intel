@@ -3,8 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertsManager } from '@/components/alerts/alerts-manager';
 import { Bell, BellRing } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
-
 interface Alert {
   id: string;
   asset_symbol: string | null;
@@ -46,9 +44,9 @@ export default async function AlertsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Alerts</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Avvisi</h1>
           <p className="text-muted-foreground">
-            Set price alerts and get notified when conditions are met.
+            Imposta avvisi di prezzo e ricevi notifiche quando le condizioni sono soddisfatte.
           </p>
         </div>
       </div>
@@ -59,7 +57,7 @@ export default async function AlertsPage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <BellRing className="h-5 w-5 text-yellow-500" />
-              Recently Triggered
+              Attivati di Recente
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -106,10 +104,10 @@ export default async function AlertsPage() {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16">
             <Bell className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No alerts set</h3>
+            <h3 className="text-lg font-semibold mb-2">Nessun avviso impostato</h3>
             <p className="text-muted-foreground text-center max-w-sm">
-              Create your first alert to get notified when an asset price or
-              macro indicator hits your target.
+              Crea il tuo primo avviso per ricevere notifiche quando il prezzo
+              di un asset o un indicatore macro raggiunge il tuo obiettivo.
             </p>
           </CardContent>
         </Card>
@@ -120,11 +118,11 @@ export default async function AlertsPage() {
 
 function formatCondition(condition: string): string {
   const conditionMap: Record<string, string> = {
-    above: 'goes above',
-    below: 'drops below',
-    crosses_above: 'crosses above',
-    crosses_below: 'crosses below',
-    change_pct: 'changes by',
+    above: 'supera',
+    below: 'scende sotto',
+    crosses_above: 'incrocia al rialzo',
+    crosses_below: 'incrocia al ribasso',
+    change_pct: 'varia di',
   };
   return conditionMap[condition] ?? condition;
 }

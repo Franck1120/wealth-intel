@@ -25,7 +25,7 @@ function getColor(value: number): string {
 export function FearGreedGauge({
   value,
   classification,
-  label = 'Fear & Greed Index',
+  label = 'Indice Paura & Avidita\'',
 }: FearGreedGaugeProps) {
   const clampedValue = Math.max(0, Math.min(100, value));
 

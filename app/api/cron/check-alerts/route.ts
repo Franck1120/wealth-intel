@@ -221,6 +221,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     let emailsSent = 0;
     for (const [userId, userAlerts] of alertsByUser) {
+      // Check if user has email notifications enabled
+      const { data: userSettingsData } = await supabase
+        .from('user_settings')
+        .select('notifications_email')
+        .eq('user_id', userId)
+        .single();
+
+      const emailEnabled = userSettingsData?.notifications_email ?? true;
+      if (!emailEnabled) continue;
+
       const { data: userData } = await supabase.auth.admin.getUserById(userId);
       const email = userData?.user?.email;
       if (!email) continue;

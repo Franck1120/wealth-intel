@@ -43,13 +43,13 @@ export function AssetPriceChart({ assetId, height = 250 }: AssetPriceChartProps)
           `/api/assets/${assetId}/price-history?period=3m`
         );
         if (!response.ok) {
-          throw new Error('Failed to fetch price data');
+          throw new Error('Errore nel caricamento dei dati di prezzo');
         }
         const result = await response.json();
         setData(result.data ?? []);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : 'Failed to load chart'
+          err instanceof Error ? err.message : 'Errore nel caricamento del grafico'
         );
       } finally {
         setIsLoading(false);
@@ -79,7 +79,7 @@ export function AssetPriceChart({ assetId, height = 250 }: AssetPriceChartProps)
         style={{ height }}
       >
         <p className="text-sm text-muted-foreground">
-          {error ?? 'No price history available'}
+          {error ?? 'Nessuno storico prezzi disponibile'}
         </p>
       </div>
     );
@@ -127,9 +127,9 @@ export function AssetPriceChart({ assetId, height = 250 }: AssetPriceChartProps)
             borderRadius: '8px',
             color: 'var(--color-foreground)',
           }}
-          formatter={(value: number | undefined) => [formatCurrency(value ?? 0), 'Price']}
+          formatter={(value: number | undefined) => [formatCurrency(value ?? 0), 'Prezzo']}
           labelFormatter={(label: unknown) =>
-            new Date(String(label)).toLocaleDateString()
+            new Date(String(label)).toLocaleDateString('it-IT')
           }
         />
         <Area

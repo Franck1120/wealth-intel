@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { getQuote } from '@/lib/data-providers/yahoo';
 import { getCoinPrice } from '@/lib/data-providers/coingecko';
+import { chunk, delay } from '@/lib/utils';
 
 const BATCH_SIZE = 10;
 const BATCH_DELAY_MS = 500;
@@ -20,21 +21,6 @@ interface PriceCacheRow {
   close: number;
   volume: number | null;
   source: string;
-}
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-/**
- * Splits an array into chunks of the given size.
- */
-function chunk<T>(arr: T[], size: number): T[][] {
-  const chunks: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) {
-    chunks.push(arr.slice(i, i + size));
-  }
-  return chunks;
 }
 
 /**
@@ -173,7 +159,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const { error: upsertError } = await supabase
       .from('price_cache')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .upsert(results as any, { onConflict: 'asset_symbol,date' });
+      .upsert(results as any, { onConflict: 'asset_symbol,asset_type,date,source' });
 
     if (upsertError) {
       return NextResponse.json(

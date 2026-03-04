@@ -30,25 +30,25 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { label: 'Portfolio', href: '/portfolio', icon: Wallet },
+  { label: 'Portafoglio', href: '/portfolio', icon: Wallet },
   {
-    label: 'Markets',
+    label: 'Mercati',
     href: '/markets',
     icon: TrendingUp,
     children: [
-      { label: 'Equities', href: '/markets/equities' },
+      { label: 'Azioni', href: '/markets/equities' },
       { label: 'Crypto', href: '/markets/crypto' },
       { label: 'Macro', href: '/markets/macro' },
-      { label: 'Commodities', href: '/markets/commodities' },
+      { label: 'Materie Prime', href: '/markets/commodities' },
       { label: 'Forex', href: '/markets/forex' },
     ],
   },
-  { label: 'Opportunities', href: '/opportunities', icon: Target },
-  { label: 'Journal', href: '/journal', icon: BookOpen },
-  { label: 'Alerts', href: '/alerts', icon: Bell },
-  { label: 'Reports', href: '/reports', icon: FileText },
-  { label: 'Analytics', href: '/analytics', icon: BarChart3 },
-  { label: 'Settings', href: '/settings', icon: Settings },
+  { label: "Opportunita'", href: '/opportunities', icon: Target },
+  { label: 'Diario Decisioni', href: '/journal', icon: BookOpen },
+  { label: 'Avvisi', href: '/alerts', icon: Bell },
+  { label: 'Report', href: '/reports', icon: FileText },
+  { label: 'Analisi', href: '/analytics', icon: BarChart3 },
+  { label: 'Impostazioni', href: '/settings', icon: Settings },
 ];
 
 function NavLink({
@@ -78,7 +78,7 @@ function NavLink({
                 }
               : undefined
           }
-          className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+          className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none ${
             isActive
               ? 'bg-primary/15 text-primary'
               : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
@@ -107,7 +107,7 @@ function NavLink({
               <li key={child.href}>
                 <Link
                   href={child.href}
-                  className={`block rounded-md px-3 py-1.5 text-sm transition-colors ${
+                  className={`block rounded-md px-3 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none ${
                     isChildActive
                       ? 'text-primary font-medium'
                       : 'text-muted-foreground hover:text-foreground'
@@ -131,6 +131,7 @@ export function Sidebar() {
   const supabase = createClient();
 
   async function handleSignOut() {
+    if (!confirm('Sei sicuro di voler uscire?')) return;
     await supabase.auth.signOut();
     router.push('/login');
   }
@@ -153,7 +154,7 @@ export function Sidebar() {
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className={`rounded-md p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors ${
+          className={`rounded-md p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none ${
             collapsed ? 'mx-auto' : ''
           }`}
           title={collapsed ? 'Espandi sidebar' : 'Comprimi sidebar'}
@@ -175,7 +176,7 @@ export function Sidebar() {
       <div className="border-t border-border p-3">
         <button
           onClick={handleSignOut}
-          className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors ${
+          className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none ${
             collapsed ? 'justify-center' : ''
           }`}
           title={collapsed ? 'Esci' : undefined}

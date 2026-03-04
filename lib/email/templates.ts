@@ -34,6 +34,8 @@ function formatPct(value: number): string {
   return `${sign}${value.toFixed(2)}%`;
 }
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://wealth-intel.vercel.app';
+
 function layout(title: string, body: string): string {
   return `<!DOCTYPE html>
 <html lang="it">
@@ -55,6 +57,9 @@ function layout(title: string, body: string): string {
               <hr style="border:none;border-top:1px solid #262626;margin:24px 0;">
               <p style="margin:0;font-size:11px;color:#525252;text-align:center;">
                 Puoi gestire le notifiche nelle Impostazioni dell'app.
+              </p>
+              <p style="text-align: center; color: #666; font-size: 12px; margin-top: 30px;">
+                Per gestire le notifiche, vai alle <a href="${BASE_URL}/settings" style="color: #3b82f6;">Impostazioni</a> del tuo account.
               </p>
             </td>
           </tr>

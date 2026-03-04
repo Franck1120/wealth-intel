@@ -10,6 +10,8 @@ import {
   type ScoringResult,
 } from '@/lib/scoring/engine';
 import type { Json } from '@/lib/supabase/types';
+import { rateLimit } from '@/lib/rate-limit';
+import { computeDailyReturns } from '@/lib/utils';
 
 /**
  * POST /api/intelligence/score
@@ -31,6 +33,14 @@ export async function POST(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const rateLimitResult = await rateLimit(`score:${user.id}`, 10, 60_000);
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Troppe richieste. Riprova tra poco.' },
+      { status: 429 },
+    );
   }
 
   const body: unknown = await request.json();
@@ -107,19 +117,6 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
-}
-
-/**
- * Compute daily percentage returns from close prices.
- */
-function computeDailyReturns(prices: number[]): number[] {
-  const returns: number[] = [];
-  for (let i = 1; i < prices.length; i++) {
-    if (prices[i - 1] !== 0) {
-      returns.push((prices[i] - prices[i - 1]) / prices[i - 1]);
-    }
-  }
-  return returns;
 }
 
 /**

@@ -30,11 +30,11 @@ interface AlertsManagerProps {
 }
 
 const CONDITION_OPTIONS = [
-  { value: 'above', label: 'Goes above' },
-  { value: 'below', label: 'Drops below' },
-  { value: 'crosses_above', label: 'Crosses above' },
-  { value: 'crosses_below', label: 'Crosses below' },
-  { value: 'change_pct', label: 'Changes by (%)' },
+  { value: 'above', label: 'Supera' },
+  { value: 'below', label: 'Scende sotto' },
+  { value: 'crosses_above', label: 'Incrocia al rialzo' },
+  { value: 'crosses_below', label: 'Incrocia al ribasso' },
+  { value: 'change_pct', label: 'Varia di (%)' },
 ];
 
 function formatCondition(condition: string): string {
@@ -50,6 +50,7 @@ export function AlertsManager({
   const [inactiveAlerts, setInactiveAlerts] = useState(initialInactive);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   async function toggleAlert(id: string, currentlyActive: boolean) {
@@ -83,13 +84,14 @@ export function AlertsManager({
         }
       }
     } catch {
-      // Silently fail
+      setError('Errore nell\'aggiornamento dell\'alert.');
     } finally {
       setTogglingId(null);
     }
   }
 
   async function deleteAlert(id: string) {
+    if (!confirm('Sei sicuro di voler eliminare questo alert?')) return;
     try {
       const response = await fetch(`/api/alerts/${id}`, {
         method: 'DELETE',
@@ -100,7 +102,7 @@ export function AlertsManager({
         setInactiveAlerts((prev) => prev.filter((a) => a.id !== id));
       }
     } catch {
-      // Silently fail
+      setError('Errore nell\'eliminazione dell\'alert.');
     }
   }
 
@@ -122,7 +124,7 @@ export function AlertsManager({
         setIsFormOpen(false);
       }
     } catch {
-      // Silently fail
+      setError('Errore nella creazione dell\'alert.');
     }
   }
 
@@ -145,12 +147,12 @@ export function AlertsManager({
           </div>
           <div className="flex items-center gap-3 mt-1">
             <span className="text-xs text-muted-foreground">
-              Created {new Date(alert.created_at).toLocaleDateString()}
+              Creato il {new Date(alert.created_at).toLocaleDateString('it-IT')}
             </span>
             {alert.triggered_at && (
               <span className="text-xs text-yellow-500">
-                Triggered{' '}
-                {new Date(alert.triggered_at).toLocaleDateString()}
+                Attivato il{' '}
+                {new Date(alert.triggered_at).toLocaleDateString('it-IT')}
               </span>
             )}
           </div>
@@ -162,7 +164,7 @@ export function AlertsManager({
             onClick={() => toggleAlert(alert.id, isActive)}
             disabled={isToggling}
             className="p-1 hover:bg-accent rounded transition-colors disabled:opacity-50"
-            title={isActive ? 'Deactivate' : 'Activate'}
+            title={isActive ? 'Disattiva' : 'Attiva'}
           >
             {isToggling ? (
               <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
@@ -177,7 +179,7 @@ export function AlertsManager({
           <button
             onClick={() => deleteAlert(alert.id)}
             className="p-1 hover:bg-destructive/10 rounded transition-colors"
-            title="Delete alert"
+            title="Elimina avviso"
           >
             <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
           </button>
@@ -188,6 +190,13 @@ export function AlertsManager({
 
   return (
     <>
+      {error && (
+        <div className="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          {error}
+          <button onClick={() => setError(null)} className="ml-2 font-medium underline">Chiudi</button>
+        </div>
+      )}
+
       {/* Create Alert Button */}
       <div className="flex justify-end">
         <button
@@ -195,7 +204,7 @@ export function AlertsManager({
           className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
         >
           <Plus className="h-4 w-4" />
-          Create Alert
+          Crea Avviso
         </button>
       </div>
 
@@ -213,7 +222,7 @@ export function AlertsManager({
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Bell className="h-5 w-5 text-emerald-500" />
-              Active Alerts ({activeAlerts.length})
+              Avvisi Attivi ({activeAlerts.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -230,7 +239,7 @@ export function AlertsManager({
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2 text-muted-foreground">
               <Bell className="h-5 w-5" />
-              Inactive Alerts ({inactiveAlerts.length})
+              Avvisi Inattivi ({inactiveAlerts.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -286,12 +295,12 @@ function CreateAlertModal({
         aria-hidden="true"
       />
       <div className="relative z-50 w-full max-w-md rounded-lg border bg-background p-6 shadow-lg">
-        <h2 className="text-lg font-semibold mb-4">Create Alert</h2>
+        <h2 className="text-lg font-semibold mb-4">Crea Avviso</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Target Type */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Alert Target</label>
+            <label className="text-sm font-medium">Obiettivo Avviso</label>
             <div className="flex gap-2">
               <button
                 type="button"
@@ -302,7 +311,7 @@ function CreateAlertModal({
                     : 'border border-input hover:bg-accent'
                 }`}
               >
-                Asset / Price
+                Asset / Prezzo
               </button>
               <button
                 type="button"
@@ -313,7 +322,7 @@ function CreateAlertModal({
                     : 'border border-input hover:bg-accent'
                 }`}
               >
-                Macro Indicator
+                Indicatore Macro
               </button>
             </div>
           </div>
@@ -321,7 +330,7 @@ function CreateAlertModal({
           {/* Target Input */}
           {targetType === 'asset' ? (
             <div className="space-y-2">
-              <label className="text-sm font-medium">Symbol</label>
+              <label className="text-sm font-medium">Simbolo</label>
               <input
                 type="text"
                 value={assetSymbol}
@@ -333,14 +342,14 @@ function CreateAlertModal({
             </div>
           ) : (
             <div className="space-y-2">
-              <label className="text-sm font-medium">Indicator</label>
+              <label className="text-sm font-medium">Indicatore</label>
               <select
                 value={indicatorName}
                 onChange={(e) => setIndicatorName(e.target.value)}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 required
               >
-                <option value="">Select an indicator</option>
+                <option value="">Seleziona un indicatore</option>
                 <option value="fed_funds_rate">Fed Funds Rate</option>
                 <option value="cpi_yoy">CPI (Year over Year)</option>
                 <option value="vix">VIX</option>
@@ -353,7 +362,7 @@ function CreateAlertModal({
 
           {/* Condition */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Condition</label>
+            <label className="text-sm font-medium">Condizione</label>
             <select
               value={condition}
               onChange={(e) => setCondition(e.target.value)}
@@ -369,7 +378,7 @@ function CreateAlertModal({
 
           {/* Threshold */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Threshold Value</label>
+            <label className="text-sm font-medium">Valore Soglia</label>
             <input
               type="number"
               step="any"
@@ -387,7 +396,7 @@ function CreateAlertModal({
               onClick={onClose}
               className="rounded-md border border-input px-4 py-2 text-sm font-medium hover:bg-accent transition-colors"
             >
-              Cancel
+              Annulla
             </button>
             <button
               type="submit"
@@ -395,7 +404,7 @@ function CreateAlertModal({
               className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
               {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              Create Alert
+              Crea Avviso
             </button>
           </div>
         </form>

@@ -9,17 +9,17 @@ import { Loader2, Search } from 'lucide-react';
 
 const transactionSchema = z.object({
   type: z.enum(['buy', 'sell'], {
-    message: 'Select a transaction type',
+    message: 'Seleziona un tipo di transazione',
   }),
-  symbol: z.string().min(1, 'Symbol is required').max(20),
+  symbol: z.string().min(1, 'Il simbolo e\' obbligatorio').max(20),
   quantity: z
-    .number({ message: 'Quantity is required' })
-    .positive('Quantity must be positive'),
+    .number({ message: 'La quantita\' e\' obbligatoria' })
+    .positive('La quantita\' deve essere positiva'),
   price: z
-    .number({ message: 'Price is required' })
-    .positive('Price must be positive'),
-  fees: z.number().min(0, 'Fees cannot be negative').optional().default(0),
-  date: z.string().min(1, 'Date is required'),
+    .number({ message: 'Il prezzo e\' obbligatorio' })
+    .positive('Il prezzo deve essere positivo'),
+  fees: z.number().min(0, 'Le commissioni non possono essere negative').optional().default(0),
+  date: z.string().min(1, 'La data e\' obbligatoria'),
   notes: z.string().max(500).optional(),
 });
 
@@ -28,11 +28,13 @@ type TransactionFormData = z.infer<typeof transactionSchema>;
 
 interface TransactionFormProps {
   portfolioId: string;
+  onSuccess?: () => void;
 }
 
-export function TransactionForm({ portfolioId }: TransactionFormProps) {
+export function TransactionForm({ portfolioId, onSuccess }: TransactionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [symbolSearchError, setSymbolSearchError] = useState<string | null>(null);
   const [symbolQuery, setSymbolQuery] = useState('');
   const [symbolSuggestions, setSymbolSuggestions] = useState<
     Array<{ symbol: string; name: string }>
@@ -80,7 +82,7 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
         setShowSuggestions(true);
       }
     } catch {
-      // Silently fail search suggestions
+      setSymbolSearchError('Errore nella ricerca del simbolo.');
     }
   }
 
@@ -106,14 +108,18 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
 
       if (!response.ok) {
         const body = await response.json().catch(() => null);
-        throw new Error(body?.error ?? 'Failed to add transaction');
+        throw new Error(body?.error ?? 'Errore nell\'aggiunta della transazione');
       }
 
-      router.push(`/portfolio/${portfolioId}`);
-      router.refresh();
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push(`/portfolio/${portfolioId}`);
+        router.refresh();
+      }
     } catch (err) {
       setServerError(
-        err instanceof Error ? err.message : 'An unexpected error occurred'
+        err instanceof Error ? err.message : 'Si e\' verificato un errore imprevisto'
       );
     } finally {
       setIsSubmitting(false);
@@ -125,7 +131,7 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
       {/* Transaction Type */}
       <div className="space-y-2">
         <label className="text-sm font-medium">
-          Type <span className="text-destructive">*</span>
+          Tipo <span className="text-destructive">*</span>
         </label>
         <div className="flex gap-2">
           <button
@@ -137,7 +143,7 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
                 : 'border border-input hover:bg-accent'
             }`}
           >
-            Buy
+            Acquisto
           </button>
           <button
             type="button"
@@ -148,7 +154,7 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
                 : 'border border-input hover:bg-accent'
             }`}
           >
-            Sell
+            Vendita
           </button>
         </div>
         {errors.type && (
@@ -159,14 +165,14 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
       {/* Symbol Search */}
       <div className="space-y-2 relative">
         <label htmlFor="symbol" className="text-sm font-medium">
-          Symbol <span className="text-destructive">*</span>
+          Simbolo <span className="text-destructive">*</span>
         </label>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             id="symbol"
             type="text"
-            placeholder="Search for a symbol (e.g., AAPL, BTC)"
+            placeholder="Cerca un simbolo (es. AAPL, BTC)"
             value={symbolQuery}
             className="flex h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             {...register('symbol', {
@@ -189,6 +195,12 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
             ))}
           </div>
         )}
+        {symbolSearchError && (
+          <div className="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+            {symbolSearchError}
+            <button onClick={() => setSymbolSearchError(null)} className="ml-2 font-medium underline">Chiudi</button>
+          </div>
+        )}
         {errors.symbol && (
           <p className="text-xs text-destructive">{errors.symbol.message}</p>
         )}
@@ -198,7 +210,7 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <label htmlFor="quantity" className="text-sm font-medium">
-            Quantity <span className="text-destructive">*</span>
+            Quantita' <span className="text-destructive">*</span>
           </label>
           <input
             id="quantity"
@@ -217,7 +229,7 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
 
         <div className="space-y-2">
           <label htmlFor="price" className="text-sm font-medium">
-            Price per Unit <span className="text-destructive">*</span>
+            Prezzo Unitario <span className="text-destructive">*</span>
           </label>
           <input
             id="price"
@@ -236,7 +248,7 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
       {/* Fees */}
       <div className="space-y-2">
         <label htmlFor="fees" className="text-sm font-medium">
-          Fees / Commission
+          Commissioni
         </label>
         <input
           id="fees"
@@ -254,7 +266,7 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
       {/* Date */}
       <div className="space-y-2">
         <label htmlFor="date" className="text-sm font-medium">
-          Date <span className="text-destructive">*</span>
+          Data <span className="text-destructive">*</span>
         </label>
         <input
           id="date"
@@ -270,12 +282,12 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
       {/* Notes */}
       <div className="space-y-2">
         <label htmlFor="notes" className="text-sm font-medium">
-          Notes
+          Note
         </label>
         <textarea
           id="notes"
           rows={3}
-          placeholder="Optional: rationale, thesis, or context for this trade"
+          placeholder="Opzionale: motivazione, tesi o contesto di questa operazione"
           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
           {...register('notes')}
         />
@@ -288,7 +300,7 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
       <div className="rounded-md bg-muted p-4">
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">
-            Total {transactionType === 'buy' ? 'Cost' : 'Proceeds'}
+            Totale {transactionType === 'buy' ? 'Costo' : 'Ricavo'}
           </span>
           <span className="text-lg font-bold tabular-nums">
             {isNaN(totalCost) ? '--' : `$${totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
@@ -310,7 +322,7 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
           onClick={() => router.back()}
           className="rounded-md border border-input px-4 py-2 text-sm font-medium hover:bg-accent transition-colors"
         >
-          Cancel
+          Annulla
         </button>
         <button
           type="submit"
@@ -322,7 +334,7 @@ export function TransactionForm({ portfolioId }: TransactionFormProps) {
           }`}
         >
           {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-          {transactionType === 'buy' ? 'Buy' : 'Sell'}
+          {transactionType === 'buy' ? 'Acquista' : 'Vendi'}
         </button>
       </div>
     </form>

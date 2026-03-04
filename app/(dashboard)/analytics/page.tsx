@@ -1,9 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency, formatPercent } from '@/lib/utils';
-import { PerformanceChart } from '@/components/charts/performance-chart';
-import { CorrelationHeatmap } from '@/components/charts/correlation-heatmap';
-import { AllocationChart } from '@/components/charts/allocation-chart';
+import dynamic from 'next/dynamic';
 import {
   BarChart3,
   Shield,
@@ -13,7 +11,20 @@ import {
   Calculator,
 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+const PerformanceChart = dynamic(
+  () => import('@/components/charts/performance-chart').then((m) => ({ default: m.PerformanceChart })),
+  { loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" /> },
+);
+
+const AllocationChart = dynamic(
+  () => import('@/components/charts/allocation-chart').then((m) => ({ default: m.AllocationChart })),
+  { loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" /> },
+);
+
+const CorrelationHeatmap = dynamic(
+  () => import('@/components/charts/correlation-heatmap').then((m) => ({ default: m.CorrelationHeatmap })),
+  { loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" /> },
+);
 
 interface RiskMetrics {
   sharpe_ratio: number | null;
@@ -49,45 +60,50 @@ export default async function AnalyticsPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const untypedSupabase = supabase as any;
 
-  // Fetch portfolio performance history
-  // Note: portfolio_snapshots table is not in the typed Database schema
-  const { data: snapshots } = await untypedSupabase
-    .from('portfolio_snapshots')
-    .select('date, total_value')
-    .order('date', { ascending: true });
-
-  // Fetch risk metrics
-  // Note: risk_metrics table is not in the typed Database schema
-  const { data: riskData } = await untypedSupabase
-    .from('risk_metrics')
-    .select('*')
-    .order('calculated_at', { ascending: false })
-    .limit(1)
-    .single();
-
-  // Fetch allocation data
-  const { data: holdings } = await untypedSupabase
-    .from('holdings')
-    .select('quantity, avg_cost_basis, assets(symbol, current_price, asset_type)')
-    .gt('quantity', 0);
-
-  // Fetch correlation matrix
-  // Note: correlation_matrix table is not in the typed Database schema
-  const { data: correlations } = await untypedSupabase
-    .from('correlation_matrix')
-    .select('*')
-    .order('calculated_at', { ascending: false })
-    .limit(1)
-    .single();
-
-  // Fetch tax summary
-  // Note: tax_summaries table is not in the typed Database schema
-  const { data: taxData } = await untypedSupabase
-    .from('tax_summaries')
-    .select('*')
-    .order('year', { ascending: false })
-    .limit(1)
-    .single();
+  // Fetch all analytics data in parallel for better performance
+  const [
+    { data: snapshots },
+    { data: riskData },
+    { data: holdings },
+    { data: correlations },
+    { data: taxData },
+  ] = await Promise.all([
+    // Portfolio performance history
+    // Note: portfolio_snapshots table is not in the typed Database schema
+    untypedSupabase
+      .from('portfolio_snapshots')
+      .select('date, total_value')
+      .order('date', { ascending: true }),
+    // Risk metrics
+    // Note: risk_metrics table is not in the typed Database schema
+    untypedSupabase
+      .from('risk_metrics')
+      .select('*')
+      .order('calculated_at', { ascending: false })
+      .limit(1)
+      .single(),
+    // Allocation data
+    untypedSupabase
+      .from('holdings')
+      .select('quantity, avg_cost_basis, assets(symbol, current_price, asset_type)')
+      .gt('quantity', 0),
+    // Correlation matrix
+    // Note: correlation_matrix table is not in the typed Database schema
+    untypedSupabase
+      .from('correlation_matrix')
+      .select('*')
+      .order('calculated_at', { ascending: false })
+      .limit(1)
+      .single(),
+    // Tax summary
+    // Note: tax_summaries table is not in the typed Database schema
+    untypedSupabase
+      .from('tax_summaries')
+      .select('*')
+      .order('year', { ascending: false })
+      .limit(1)
+      .single(),
+  ]);
 
   const performanceData = ((snapshots as PortfolioSnapshot[] | null) ?? []).map((s) => ({
     date: s.date,
@@ -154,9 +170,9 @@ export default async function AnalyticsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Analytics</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Analisi</h1>
         <p className="text-muted-foreground">
-          Portfolio performance, risk metrics, and tax analysis.
+          Performance del portafoglio, metriche di rischio e analisi fiscale.
         </p>
       </div>
 
@@ -164,10 +180,10 @@ export default async function AnalyticsPage() {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16">
             <BarChart3 className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No analytics data yet</h3>
+            <h3 className="text-lg font-semibold mb-2">Nessun dato di analisi</h3>
             <p className="text-muted-foreground text-center max-w-sm">
-              Analytics will populate once you have portfolio holdings and the
-              system has collected enough historical data for analysis.
+              Le analisi appariranno quando avrai posizioni in portafoglio e il
+              sistema avra' raccolto abbastanza dati storici.
             </p>
           </CardContent>
         </Card>
@@ -178,7 +194,7 @@ export default async function AnalyticsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Activity className="h-5 w-5" />
-                Portfolio Performance
+                Performance Portafoglio
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -187,8 +203,8 @@ export default async function AnalyticsPage() {
               ) : (
                 <div className="flex items-center justify-center h-64">
                   <p className="text-muted-foreground text-sm">
-                    Performance chart requires at least 2 data points.
-                    Historical snapshots are recorded daily.
+                    Il grafico delle performance richiede almeno 2 punti dati.
+                    Gli snapshot storici vengono registrati giornalmente.
                   </p>
                 </div>
               )}
@@ -202,43 +218,43 @@ export default async function AnalyticsPage() {
               value={risk.sharpe_ratio}
               format="decimal"
               icon={<Shield className="h-4 w-4" />}
-              description="Risk-adjusted return"
+              description="Rendimento aggiustato per il rischio"
             />
             <RiskMetricCard
               label="Sortino Ratio"
               value={risk.sortino_ratio}
               format="decimal"
               icon={<Shield className="h-4 w-4" />}
-              description="Downside risk-adjusted"
+              description="Aggiustato per rischio ribassista"
             />
             <RiskMetricCard
               label="Max Drawdown"
               value={risk.max_drawdown}
               format="percent"
               icon={<TrendingDown className="h-4 w-4" />}
-              description="Largest peak-to-trough"
+              description="Massimo calo da picco a minimo"
               isNegativeGood={false}
             />
             <RiskMetricCard
-              label="Volatility"
+              label="Volatilita'"
               value={risk.volatility}
               format="percent"
               icon={<Activity className="h-4 w-4" />}
-              description="Annualized std dev"
+              description="Deviazione standard annualizzata"
             />
             <RiskMetricCard
               label="Beta"
               value={risk.beta}
               format="decimal"
               icon={<BarChart3 className="h-4 w-4" />}
-              description="Market sensitivity"
+              description="Sensibilita' al mercato"
             />
             <RiskMetricCard
               label="VaR (95%)"
               value={risk.var_95}
               format="currency"
               icon={<Shield className="h-4 w-4" />}
-              description="Value at Risk"
+              description="Valore a Rischio"
               isNegativeGood={false}
             />
           </div>
@@ -250,7 +266,7 @@ export default async function AnalyticsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <PieChart className="h-5 w-5" />
-                  Asset Allocation
+                  Allocazione Asset
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -258,7 +274,7 @@ export default async function AnalyticsPage() {
                   <AllocationChart data={allocationData} />
                 ) : (
                   <p className="text-sm text-muted-foreground text-center py-8">
-                    No holdings to display
+                    Nessuna posizione da visualizzare
                   </p>
                 )}
               </CardContent>
@@ -269,7 +285,7 @@ export default async function AnalyticsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <PieChart className="h-5 w-5" />
-                  By Asset Type
+                  Per Tipo di Asset
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -277,7 +293,7 @@ export default async function AnalyticsPage() {
                   <AllocationChart data={typeAllocationData} />
                 ) : (
                   <p className="text-sm text-muted-foreground text-center py-8">
-                    No holdings to display
+                    Nessuna posizione da visualizzare
                   </p>
                 )}
               </CardContent>
@@ -288,7 +304,7 @@ export default async function AnalyticsPage() {
           {correlationMatrix && correlationSymbols && (
             <Card>
               <CardHeader>
-                <CardTitle>Correlation Matrix</CardTitle>
+                <CardTitle>Matrice di Correlazione</CardTitle>
               </CardHeader>
               <CardContent>
                 <CorrelationHeatmap
@@ -304,7 +320,7 @@ export default async function AnalyticsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calculator className="h-5 w-5" />
-                Tax Summary (Italy)
+                Riepilogo Fiscale (Italia)
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -312,7 +328,7 @@ export default async function AnalyticsPage() {
                 <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
                   <div className="rounded-md border p-3 text-center">
                     <p className="text-xs text-muted-foreground mb-1">
-                      Total Gains
+                      Guadagni Totali
                     </p>
                     <p className="text-lg font-bold tabular-nums text-emerald-500">
                       {formatCurrency(tax.total_gains)}
@@ -320,7 +336,7 @@ export default async function AnalyticsPage() {
                   </div>
                   <div className="rounded-md border p-3 text-center">
                     <p className="text-xs text-muted-foreground mb-1">
-                      Total Losses
+                      Perdite Totali
                     </p>
                     <p className="text-lg font-bold tabular-nums text-red-500">
                       {formatCurrency(tax.total_losses)}
@@ -328,7 +344,7 @@ export default async function AnalyticsPage() {
                   </div>
                   <div className="rounded-md border p-3 text-center">
                     <p className="text-xs text-muted-foreground mb-1">
-                      Net Gain
+                      Guadagno Netto
                     </p>
                     <p
                       className={`text-lg font-bold tabular-nums ${
@@ -342,7 +358,7 @@ export default async function AnalyticsPage() {
                   </div>
                   <div className="rounded-md border p-3 text-center">
                     <p className="text-xs text-muted-foreground mb-1">
-                      Tax Rate
+                      Aliquota Fiscale
                     </p>
                     <p className="text-lg font-bold tabular-nums">
                       {tax.tax_rate}%
@@ -350,7 +366,7 @@ export default async function AnalyticsPage() {
                   </div>
                   <div className="rounded-md border p-3 text-center">
                     <p className="text-xs text-muted-foreground mb-1">
-                      Estimated Tax
+                      Imposta Stimata
                     </p>
                     <p className="text-lg font-bold tabular-nums text-red-500">
                       {formatCurrency(tax.estimated_tax)}
@@ -358,7 +374,7 @@ export default async function AnalyticsPage() {
                   </div>
                   <div className="rounded-md border p-3 text-center">
                     <p className="text-xs text-muted-foreground mb-1">
-                      Loss Carryforward
+                      Minusvalenze Pregresse
                     </p>
                     <p className="text-lg font-bold tabular-nums">
                       {formatCurrency(tax.loss_carryforward)}
@@ -368,9 +384,9 @@ export default async function AnalyticsPage() {
               ) : (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground text-sm">
-                    Tax calculations will appear after you record buy/sell
-                    transactions. Italian capital gains tax (26% imposta
-                    sostitutiva) is calculated automatically.
+                    I calcoli fiscali appariranno dopo aver registrato transazioni
+                    di acquisto/vendita. L'imposta sostitutiva italiana (26%)
+                    viene calcolata automaticamente.
                   </p>
                 </div>
               )}

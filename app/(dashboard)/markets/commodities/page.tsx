@@ -1,10 +1,13 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
-import { AssetPriceChart as PriceChart } from '@/components/charts/asset-price-chart';
+import dynamic from 'next/dynamic';
 import { TrendingUp, TrendingDown, Gem } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+const PriceChart = dynamic(
+  () => import('@/components/charts/asset-price-chart').then((m) => ({ default: m.AssetPriceChart })),
+  { loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" /> },
+);
 
 interface Commodity {
   id: string;
@@ -34,9 +37,9 @@ export default async function CommoditiesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Commodities</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Materie Prime</h1>
         <p className="text-muted-foreground">
-          Track precious metals, energy, and raw materials.
+          Monitora metalli preziosi, energia e materie prime.
         </p>
       </div>
 
@@ -45,11 +48,11 @@ export default async function CommoditiesPage() {
           <CardContent className="flex flex-col items-center justify-center py-16">
             <Gem className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">
-              No commodity data yet
+              Nessun dato sulle materie prime
             </h3>
             <p className="text-muted-foreground text-center max-w-sm">
-              Commodity prices will appear here once the data pipeline is
-              configured and running.
+              I prezzi delle materie prime appariranno qui quando la pipeline
+              dati sara' configurata e attiva.
             </p>
           </CardContent>
         </Card>
@@ -105,7 +108,7 @@ export default async function CommoditiesPage() {
                                 : 'bg-red-500/10 text-red-500'
                           }`}
                         >
-                          Score: {commodity.score}/10
+                          Punteggio: {commodity.score}/10
                         </span>
                       )}
                     </div>
@@ -121,7 +124,7 @@ export default async function CommoditiesPage() {
               <Card key={commodity.id}>
                 <CardHeader>
                   <CardTitle>
-                    {commodity.name} Price
+                    Prezzo {commodity.name}
                     <span className="ml-2 text-sm font-normal text-muted-foreground">
                       {commodity.symbol}
                     </span>

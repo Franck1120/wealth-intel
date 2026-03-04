@@ -181,9 +181,11 @@ export async function GET(request: NextRequest) {
       (orderMap.get(b.indicator_key as string) ?? 999),
   );
 
-  return NextResponse.json({
+  const response = NextResponse.json({
     data: allData,
     fetched_count: freshData.length,
     cached_count: dedupedCached.length,
   });
+  response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=7200');
+  return response;
 }

@@ -1,12 +1,23 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
-import { AssetPriceChart as PriceChart } from '@/components/charts/asset-price-chart';
-import { FearGreedGauge } from '@/components/charts/fear-greed-gauge';
-import { SparklineChart } from '@/components/charts/sparkline-chart';
+import dynamic from 'next/dynamic';
 import { Bitcoin } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+const PriceChart = dynamic(
+  () => import('@/components/charts/asset-price-chart').then((m) => ({ default: m.AssetPriceChart })),
+  { loading: () => <div className="h-64 animate-pulse rounded-lg bg-muted" /> },
+);
+
+const FearGreedGauge = dynamic(
+  () => import('@/components/charts/fear-greed-gauge').then((m) => ({ default: m.FearGreedGauge })),
+  { loading: () => <div className="h-32 animate-pulse rounded-lg bg-muted" /> },
+);
+
+const SparklineChart = dynamic(
+  () => import('@/components/charts/sparkline-chart').then((m) => ({ default: m.SparklineChart })),
+  { loading: () => <div className="h-8 animate-pulse rounded bg-muted" /> },
+);
 
 interface CryptoAsset {
   id: string;
@@ -75,7 +86,7 @@ export default async function CryptoPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Crypto</h1>
         <p className="text-muted-foreground">
-          Cryptocurrencies, DeFi protocols, and market sentiment.
+          Criptovalute, protocolli DeFi e sentiment di mercato.
         </p>
       </div>
 
@@ -84,7 +95,7 @@ export default async function CryptoPage() {
         {/* Fear & Greed */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Fear & Greed Index</CardTitle>
+            <CardTitle className="text-base">Indice Paura & Avidita'</CardTitle>
           </CardHeader>
           <CardContent>
             {fearGreedIndex !== null ? (
@@ -92,7 +103,7 @@ export default async function CryptoPage() {
             ) : (
               <div className="flex items-center justify-center h-32">
                 <p className="text-muted-foreground text-sm">
-                  No data available
+                  Nessun dato disponibile
                 </p>
               </div>
             )}
@@ -130,7 +141,7 @@ export default async function CryptoPage() {
                 )}
               </div>
             ) : (
-              <p className="text-muted-foreground text-sm">No data</p>
+              <p className="text-muted-foreground text-sm">Nessun dato</p>
             )}
           </CardContent>
         </Card>
@@ -168,7 +179,7 @@ export default async function CryptoPage() {
                 )}
               </div>
             ) : (
-              <p className="text-muted-foreground text-sm">No data</p>
+              <p className="text-muted-foreground text-sm">Nessun dato</p>
             )}
           </CardContent>
         </Card>
@@ -179,7 +190,7 @@ export default async function CryptoPage() {
         {btc && (
           <Card>
             <CardHeader>
-              <CardTitle>BTC Price Chart</CardTitle>
+              <CardTitle>Grafico Prezzo BTC</CardTitle>
             </CardHeader>
             <CardContent>
               <PriceChart assetId={btc.id} />
@@ -189,7 +200,7 @@ export default async function CryptoPage() {
         {eth && (
           <Card>
             <CardHeader>
-              <CardTitle>ETH Price Chart</CardTitle>
+              <CardTitle>Grafico Prezzo ETH</CardTitle>
             </CardHeader>
             <CardContent>
               <PriceChart assetId={eth.id} />
@@ -201,13 +212,13 @@ export default async function CryptoPage() {
       {/* Top Coins Grid */}
       <Card>
         <CardHeader>
-          <CardTitle>Top Coins by Market Cap</CardTitle>
+          <CardTitle>Top Coin per Capitalizzazione</CardTitle>
         </CardHeader>
         <CardContent>
           {coins.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
-              No crypto data available yet. Market data will populate once the
-              data pipeline runs.
+              Nessun dato crypto disponibile. I dati di mercato appariranno quando
+              la pipeline dati sara' attiva.
             </p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -258,12 +269,12 @@ export default async function CryptoPage() {
       {/* DeFi Protocols */}
       <Card>
         <CardHeader>
-          <CardTitle>DeFi - Top Protocols by TVL</CardTitle>
+          <CardTitle>DeFi - Top Protocolli per TVL</CardTitle>
         </CardHeader>
         <CardContent>
           {protocols.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
-              DeFi data will be available once the data pipeline is configured.
+              I dati DeFi saranno disponibili quando la pipeline dati sara' configurata.
             </p>
           ) : (
             <div className="overflow-x-auto">
@@ -274,7 +285,7 @@ export default async function CryptoPage() {
                       #
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Protocol
+                      Protocollo
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Chain
@@ -283,7 +294,7 @@ export default async function CryptoPage() {
                       TVL
                     </th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      24h Change
+                      Variazione 24h
                     </th>
                   </tr>
                 </thead>

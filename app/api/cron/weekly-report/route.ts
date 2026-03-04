@@ -281,24 +281,35 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       } else {
         reportsGenerated++;
 
-        // Send weekly report email
-        const { data: userData } = await supabase.auth.admin.getUserById(userId);
-        const userEmail = userData?.user?.email;
-        if (userEmail) {
-          await sendEmail({
-            to: userEmail,
-            subject: `Report Settimanale — ${weekChangePct >= 0 ? '+' : ''}${weekChangePct.toFixed(2)}% (${today})`,
-            htmlContent: buildWeeklyReportEmail({
-              totalValue,
-              weekChange,
-              weekChangePct,
-              bestPerformer,
-              worstPerformer,
-              topMovers,
-              alertsTriggered: content.alertsTriggered.length,
-              weekStart: today,
-            }).html,
-          });
+        // Send weekly report email (only if user has notifications enabled)
+        const { data: userSettingsData } = await supabase
+          .from('user_settings')
+          .select('notifications_email, notifications_weekly_report')
+          .eq('user_id', userId)
+          .single();
+
+        const emailEnabled = userSettingsData?.notifications_email ?? true;
+        const weeklyReportEnabled = userSettingsData?.notifications_weekly_report ?? true;
+
+        if (emailEnabled && weeklyReportEnabled) {
+          const { data: userData } = await supabase.auth.admin.getUserById(userId);
+          const userEmail = userData?.user?.email;
+          if (userEmail) {
+            await sendEmail({
+              to: userEmail,
+              subject: `Report Settimanale — ${weekChangePct >= 0 ? '+' : ''}${weekChangePct.toFixed(2)}% (${today})`,
+              htmlContent: buildWeeklyReportEmail({
+                totalValue,
+                weekChange,
+                weekChangePct,
+                bestPerformer,
+                worstPerformer,
+                topMovers,
+                alertsTriggered: content.alertsTriggered.length,
+                weekStart: today,
+              }).html,
+            });
+          }
         }
       }
     } catch (err) {
