@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
+import { sendEmail } from '@/lib/email/client';
+import { buildWeeklyReportEmail } from '@/lib/email/templates';
 
 interface PortfolioRow {
   id: string;
@@ -278,6 +280,26 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         errors.push({ userId, error: insertError.message });
       } else {
         reportsGenerated++;
+
+        // Send weekly report email
+        const { data: userData } = await supabase.auth.admin.getUserById(userId);
+        const userEmail = userData?.user?.email;
+        if (userEmail) {
+          await sendEmail({
+            to: userEmail,
+            subject: `Report Settimanale — ${weekChangePct >= 0 ? '+' : ''}${weekChangePct.toFixed(2)}% (${today})`,
+            htmlContent: buildWeeklyReportEmail({
+              totalValue,
+              weekChange,
+              weekChangePct,
+              bestPerformer,
+              worstPerformer,
+              topMovers,
+              alertsTriggered: content.alertsTriggered.length,
+              weekStart: today,
+            }).html,
+          });
+        }
       }
     } catch (err) {
       errors.push({

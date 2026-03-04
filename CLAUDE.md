@@ -27,8 +27,9 @@ Replaces 11 Gemini Gems + 2 Custom GPTs with a single Next.js 15 app.
 - `lib/scoring/` — Quantitative scoring engine (5 dimensions + adapters)
 - `lib/calculations/` — Portfolio P&L, risk metrics, correlation, Italian tax calculator
 - `lib/ai/` — Optional Claude API integration (disabled by default)
+- `lib/email/` — Brevo transactional email (alerts + weekly reports)
 - `components/` — UI components, charts, layout
-- `supabase/migrations/` — Database schema (3 migration files)
+- `supabase/migrations/` — Database schema (4 migration files)
 
 ## Conventions
 - Use `@/` path alias for all imports

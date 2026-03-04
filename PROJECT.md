@@ -15,7 +15,7 @@
 | **Versione** | 0.1.0 |
 | **Autore** | vault01 |
 | **Creato** | 2026-03-03 |
-| **Stato** | Fase 1-2 completate, Fase 3-4 parziali |
+| **Stato** | Fase 1-3 completate, Fase 4 parziale |
 
 ---
 
@@ -42,14 +42,14 @@
 
 | Metrica | Valore |
 |---------|--------|
-| **File sorgente totali** | 107 |
-| **Linee di codice totali** | ~17.000 |
+| **File sorgente totali** | 115 |
+| **Linee di codice totali** | ~18.000 |
 | **Pagine** | 16 |
-| **API Routes** | 16 |
+| **API Routes** | 21 |
 | **Cron Jobs** | 5 |
 | **Componenti UI** | 28 |
 | **Moduli lib** | 31 |
-| **Migrazioni SQL** | 3 |
+| **Migrazioni SQL** | 4 |
 
 ### Breakdown per directory
 
@@ -78,7 +78,7 @@
 
 ---
 
-## Database Schema (12 tabelle)
+## Database Schema (14 tabelle)
 
 | Tabella | Descrizione | RLS |
 |---------|-------------|-----|
@@ -94,6 +94,8 @@
 | `decision_journal` | Diario decisioni (anti-bias, emotion tracking) | user_id |
 | `alerts` | Alert configurabili (price, macro) | user_id |
 | `weekly_reports` | Report settimanali generati | user_id |
+| `user_settings` | Preferenze utente (currency, tax, notifiche) | user_id |
+| `watchlist` | Asset osservati senza posizione | user_id |
 
 ---
 
@@ -169,7 +171,7 @@ Adapter commodity: Value/Quality → Mean Reversion + Seasonal
 | `next build` | **PASS** | 33 route compilate, tutte dynamic |
 | `eslint` | **PASS** | Zero errori, zero warning |
 | `vitest run` | **PASS** | 11 file, 369 test, 3.6s |
-| `git commit` | **PENDING** | Tutto untracked, nessun commit |
+| `git commit` | **PASS** | 121 file, 25.388 LOC, commit `cedd857` |
 
 ---
 
@@ -193,7 +195,9 @@ Adapter commodity: Value/Quality → Mean Reversion + Seasonal
 | `ANTHROPIC_API_KEY` | Anthropic | ~$2-5/mese (Haiku) |
 | `UPSTASH_REDIS_REST_URL` | Upstash | Free tier |
 | `UPSTASH_REDIS_REST_TOKEN` | Upstash | Free tier |
-| `RESEND_API_KEY` | Resend | Free (100 email/day) |
+| `BREVO_API_KEY` | Brevo | Free (300 email/day) |
+| `BREVO_SENDER_EMAIL` | Brevo account email | Free |
+| `BREVO_SENDER_NAME` | Display name | - |
 | `NEXT_PUBLIC_SENTRY_DSN` | Sentry | Free tier |
 
 ---
@@ -232,14 +236,19 @@ Adapter commodity: Value/Quality → Mean Reversion + Seasonal
 
 - [x] ~~**ESLint clean**~~ — Risolto: zero errori, zero warning
 - [x] ~~**Unit test**~~ — 11 file, 369 test (scoring 6 file/143 test, calculations 4 file/159 test, validators 1 file/67 test)
-- [ ] **Git commit iniziale** — Tutto il codice non e' committato
+- [x] ~~**Git commit iniziale**~~ — Committato: 121 file, 25.388 LOC
 - [ ] **Supabase project** — Creare progetto, applicare 3 migrazioni SQL, configurare Auth
 - [ ] **Env vars reali** — Ottenere API key (FRED, CoinGecko), generare CRON_SECRET
 
-### Fase 3 (Automation)
+### Fase 3 (Automation) — COMPLETATA
 
-- [ ] **Email notifications** — Resend + React Email templates per alert triggered
-- [ ] **Email weekly digest** — Template per report settimanale via email
+- [x] **Email notifications** — Brevo REST API, template HTML dark theme per alert triggered
+- [x] **Email weekly digest** — Template per report settimanale via email
+- [x] **Settings API** — GET/PUT /api/settings con user_settings table
+- [x] **Auth signout** — POST /api/auth/signout
+- [x] **Watchlist** — POST/GET/DELETE /api/watchlist con watchlist table
+- [x] **Asset search** — GET /api/assets/search via yahoo-finance2
+- [x] **Alert CRUD dinamico** — PATCH/DELETE /api/alerts/[id]
 
 ### Fase 4 (Polish)
 
@@ -282,5 +291,5 @@ Adapter commodity: Value/Quality → Mean Reversion + Seasonal
 |------|-------------|-------|
 | **Fase 1** | Foundation + Portfolio Tracker | **Completata** |
 | **Fase 2** | Intelligence Layer (scoring, macro, opportunities) | **Completata** |
-| **Fase 3** | Automation + Alerts (email, journal, weekly report) | **Parziale** (alert + journal + report fatto, email manca) |
+| **Fase 3** | Automation + Alerts (email, settings, watchlist, search) | **Completata** |
 | **Fase 4** | Analytics + Polish (risk, tax, PWA, E2E, landing) | **Parziale** (analytics + tax fatto, PWA/E2E/landing mancano) |

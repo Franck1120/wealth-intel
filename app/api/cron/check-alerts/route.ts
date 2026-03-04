@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
+import { sendEmail } from '@/lib/email/client';
+import { buildAlertEmail } from '@/lib/email/templates';
 
 type AlertCondition = 'price_above' | 'price_below' | 'pct_change' | 'macro_threshold';
 
@@ -206,6 +208,44 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         { status: 500 },
       );
     }
+  }
+
+  // 6. Send email notifications grouped by user
+  if (triggered.length > 0) {
+    const alertsByUser = new Map<string, TriggeredAlert[]>();
+    for (const alert of triggered) {
+      const existing = alertsByUser.get(alert.userId) ?? [];
+      existing.push(alert);
+      alertsByUser.set(alert.userId, existing);
+    }
+
+    let emailsSent = 0;
+    for (const [userId, userAlerts] of alertsByUser) {
+      const { data: userData } = await supabase.auth.admin.getUserById(userId);
+      const email = userData?.user?.email;
+      if (!email) continue;
+
+      const { subject, html } = buildAlertEmail({
+        alerts: userAlerts.map((a) => ({
+          symbol: a.symbol,
+          condition: a.condition,
+          threshold: a.threshold,
+          currentValue: a.currentValue,
+        })),
+      });
+
+      const sent = await sendEmail({ to: email, subject, htmlContent: html });
+      if (sent) emailsSent++;
+    }
+
+    return NextResponse.json({
+      success: true,
+      checked: typedAlerts.length,
+      triggered: triggered.length,
+      emailsSent,
+      triggeredAlerts: triggered,
+      timestamp: now,
+    });
   }
 
   return NextResponse.json({

@@ -368,6 +368,61 @@ export interface Database {
         };
         Relationships: [];
       };
+      user_settings: {
+        Row: {
+          id: string;
+          user_id: string;
+          base_currency: string;
+          tax_rate: number;
+          loss_carryforward: number;
+          notifications_email: boolean;
+          notifications_browser: boolean;
+          notifications_weekly_report: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          base_currency?: string;
+          tax_rate?: number;
+          loss_carryforward?: number;
+          notifications_email?: boolean;
+          notifications_browser?: boolean;
+          notifications_weekly_report?: boolean;
+        };
+        Update: {
+          base_currency?: string;
+          tax_rate?: number;
+          loss_carryforward?: number;
+          notifications_email?: boolean;
+          notifications_browser?: boolean;
+          notifications_weekly_report?: boolean;
+        };
+        Relationships: [];
+      };
+      watchlist: {
+        Row: {
+          id: string;
+          user_id: string;
+          asset_id: string;
+          module: string;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          asset_id: string;
+          module: string;
+          notes?: string | null;
+        };
+        Update: {
+          module?: string;
+          notes?: string | null;
+        };
+        Relationships: [];
+      };
       weekly_reports: {
         Row: {
           id: string;
@@ -435,6 +490,8 @@ export type Opportunity = Tables<'opportunities'>;
 export type DecisionJournalEntry = Tables<'decision_journal'>;
 export type Alert = Tables<'alerts'>;
 export type WeeklyReport = Tables<'weekly_reports'>;
+export type UserSettings = Tables<'user_settings'>;
+export type WatchlistItem = Tables<'watchlist'>;
 
 // Asset type and module enums
 export type AssetType = 'stock' | 'etf' | 'crypto' | 'commodity' | 'forex' | 'reit' | 'bond' | 'alternative' | 'business';
