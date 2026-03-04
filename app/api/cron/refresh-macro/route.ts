@@ -118,7 +118,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         indicator_key: `EURIBOR_${rate.tenor}`,
         value: rate.rate,
         source: 'ecb',
-        date: rate.date ?? today,
+        // ECB returns monthly dates (YYYY-MM), DB needs YYYY-MM-DD
+        date: rate.date && rate.date.length === 7 ? `${rate.date}-01` : (rate.date ?? today),
       });
     }
   } else {
