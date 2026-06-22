@@ -139,4 +139,4 @@ MIT — see [LICENSE](LICENSE).
 
 ## Author
 
-Built by **[Hephios Lab](https://github.com/Franck1120)** ([@Franck1120](https://github.com/Franck1120)).
+Maintained by [@Franck1120](https://github.com/Franck1120). Open issues for discussion.
